@@ -4,6 +4,7 @@ from .search_widget import SearchWidget
 from .notifications_widget import NotificationsWidget
 from .navigation_widget import NavigationWidget
 from .chat_widget import ChatWidget
+from .date_time_widget import LuxuryDateTimeWidget
 from themes import get_color
 
 
@@ -30,6 +31,9 @@ class TopBarWidget(QWidget):
         self.navigation_widget = NavigationWidget(self.translator)
         self.navigation_widget.home_clicked.connect(self.home_clicked)
 
+        # Create luxury date and time widget
+        self.date_time_widget = LuxuryDateTimeWidget(self.translator)
+
         # Create search widget with expanded functionality
         self.search_widget = SearchWidget(self.translator, self.database)
         self.search_widget.search_submitted.connect(self.search_submitted)
@@ -44,6 +48,10 @@ class TopBarWidget(QWidget):
 
         # Arrange components with proper spacing
         main_layout.addWidget(self.navigation_widget)
+
+        # Add date and time widget aligned to the left
+        main_layout.addWidget(self.date_time_widget)
+
         main_layout.addSpacerItem(
             QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         main_layout.addWidget(self.search_widget)
@@ -69,6 +77,7 @@ class TopBarWidget(QWidget):
         self.notifications_widget.update_translations()
         self.navigation_widget.update_translations()
         self.chat_widget.update_translations()
+        self.date_time_widget.update_translations()
 
     def apply_theme(self):
         """Apply theme to the top bar and its components"""
@@ -85,3 +94,4 @@ class TopBarWidget(QWidget):
         self.notifications_widget.apply_theme()
         self.navigation_widget.apply_theme()
         self.chat_widget.apply_theme()
+        self.date_time_widget.apply_theme()
