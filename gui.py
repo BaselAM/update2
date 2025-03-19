@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon
 
 # Import widgets
 from widgets.layout import HeaderWidget, FooterWidget, CopyrightWidget
-from widgets.search import TopBarWidget  # Import the new class name
+from widgets.header import TopBarWidget
 from widgets.products import ProductsWidget
 from widgets.statistics import StatisticsWidget
 from widgets.settings import SettingsWidget
