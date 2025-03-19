@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QSize  # Correct import for QSize
 from PyQt5.QtWidgets import QWidget, QToolButton, QHBoxLayout
 from PyQt5.QtGui import QIcon
 from pathlib import Path
@@ -30,7 +30,7 @@ class NavigationWidget(QWidget):
             __file__).resolve().parent.parent.parent / "resources/home_icon.png"
         if home_icon_path.exists():
             self.home_btn.setIcon(QIcon(str(home_icon_path)))
-            self.home_btn.setIconSize(QSize(24, 24))
+            self.home_btn.setIconSize(QSize(24, 24))  # Fixed: use QSize directly
         else:
             self.home_btn.setText("🏠")
             self.home_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)

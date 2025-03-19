@@ -1,195 +1,166 @@
 import sqlite3
+from datetime import datetime, timedelta
 import os
-import datetime
 from pathlib import Path
 
 
-class NotificationDatabase:
-    """Database handler for storing and retrieving notifications"""
+class NotificationDatabaseConnector:
+    """Connector for handling notification database operations"""
 
     def __init__(self, db_path=None):
-        """Initialize the notification database"""
+        """Initialize the database connector with optional custom path"""
         if db_path is None:
-            # Store in user's home directory by default
-            home_dir = Path.home()
-            app_data_dir = home_dir / '.car_parts_app'
-            os.makedirs(app_data_dir, exist_ok=True)
-            db_path = app_data_dir / 'notifications.db'
+            # Default path in the application directory
+            app_dir = Path(__file__).resolve().parent.parent
+            db_path = os.path.join(app_dir, 'data', 'notifications.db')
+
+            # Ensure data directory exists
+            os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
         self.db_path = db_path
-        self._create_tables()
+        self._create_tables_if_not_exist()
 
-    def _create_tables(self):
-        """Create the notifications table if it doesn't exist"""
-        conn = sqlite3.connect(str(self.db_path))
+    def _create_tables_if_not_exist(self):
+        """Create notification tables if they don't exist"""
+        conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
         # Create notifications table
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS notifications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                message TEXT NOT NULL,
-                timestamp TEXT NOT NULL,
-                read INTEGER DEFAULT 0,
-                importance INTEGER DEFAULT 1,
-                category TEXT DEFAULT 'general'
-            )
+        CREATE TABLE IF NOT EXISTS notifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            priority TEXT DEFAULT 'normal',
+            category TEXT,
+            is_read INTEGER DEFAULT 0,
+            user_id TEXT
+        )
+        ''')
+
+        # Create user preferences table
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS notification_preferences (
+            user_id TEXT PRIMARY KEY,
+            enabled INTEGER DEFAULT 1,
+            sound_enabled INTEGER DEFAULT 1,
+            display_time INTEGER DEFAULT 5
+        )
         ''')
 
         conn.commit()
         conn.close()
 
-    def add_notification(self, title, message, category='general', importance=1):
-        """Add a new notification to the database"""
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        conn = sqlite3.connect(str(self.db_path))
+    def get_notifications_for_user(self, user_id, limit=20, include_read=False):
+        """Get recent notifications for a specific user"""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row  # Return rows as dictionaries
         cursor = conn.cursor()
 
-        cursor.execute('''
-            INSERT INTO notifications (title, message, timestamp, importance, category)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (title, message, timestamp, importance, category))
-
-        notification_id = cursor.lastrowid
-
-        conn.commit()
-        conn.close()
-
-        return notification_id
-
-    def mark_as_read(self, notification_id):
-        """Mark a notification as read"""
-        conn = sqlite3.connect(str(self.db_path))
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            UPDATE notifications
-            SET read = 1
-            WHERE id = ?
-        ''', (notification_id,))
-
-        conn.commit()
-        conn.close()
-
-    def mark_all_as_read(self):
-        """Mark all notifications as read"""
-        conn = sqlite3.connect(str(self.db_path))
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            UPDATE notifications
-            SET read = 1
-        ''')
-
-        conn.commit()
-        conn.close()
-
-    def get_unread_count(self):
-        """Get the count of unread notifications"""
-        conn = sqlite3.connect(str(self.db_path))
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            SELECT COUNT(*) FROM notifications
-            WHERE read = 0
-        ''')
-
-        count = cursor.fetchone()[0]
-
-        conn.close()
-
-        return count
-
-    def get_notifications(self, limit=50, include_read=False, category=None):
-        """Get recent notifications with optional filtering"""
-        conn = sqlite3.connect(str(self.db_path))
-        cursor = conn.cursor()
-
-        query = "SELECT id, title, message, timestamp, read, importance, category FROM notifications"
-        conditions = []
-        params = []
+        query = "SELECT * FROM notifications WHERE user_id = ?"
+        params = [user_id]
 
         if not include_read:
-            conditions.append("read = 0")
-
-        if category:
-            conditions.append("category = ?")
-            params.append(category)
-
-        if conditions:
-            query += " WHERE " + " AND ".join(conditions)
+            query += " AND is_read = 0"
 
         query += " ORDER BY timestamp DESC LIMIT ?"
         params.append(limit)
 
         cursor.execute(query, params)
-
-        notifications = []
-        for row in cursor.fetchall():
-            notifications.append({
-                'id': row[0],
-                'title': row[1],
-                'message': row[2],
-                'time': self._format_time(row[3]),
-                'timestamp': row[3],
-                'read': bool(row[4]),
-                'importance': row[5],
-                'category': row[6]
-            })
+        results = [dict(row) for row in cursor.fetchall()]
 
         conn.close()
+        return results
 
-        return notifications
-
-    def delete_notification(self, notification_id):
-        """Delete a notification by ID"""
-        conn = sqlite3.connect(str(self.db_path))
+    def get_unread_notification_count(self, user_id):
+        """Get the count of unread notifications for a user"""
+        conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute('''
-            DELETE FROM notifications
-            WHERE id = ?
-        ''', (notification_id,))
+        cursor.execute(
+            "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0",
+            (user_id,)
+        )
+        count = cursor.fetchone()[0]
 
+        conn.close()
+        return count
+
+    def mark_notification_as_read(self, notification_id, user_id=None):
+        """Mark a specific notification as read"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+
+        query = "UPDATE notifications SET is_read = 1 WHERE id = ?"
+        params = [notification_id]
+
+        # Add user check for security if provided
+        if user_id:
+            query += " AND user_id = ?"
+            params.append(user_id)
+
+        cursor.execute(query, params)
+        rows_affected = cursor.rowcount
         conn.commit()
         conn.close()
 
-    def delete_all_read(self):
-        """Delete all read notifications"""
-        conn = sqlite3.connect(str(self.db_path))
+        return rows_affected > 0
+
+    def mark_all_as_read(self, user_id):
+        """Mark all notifications for a user as read"""
+        conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute('''
-            DELETE FROM notifications
-            WHERE read = 1
-        ''')
-
+        cursor.execute(
+            "UPDATE notifications SET is_read = 1 WHERE user_id = ?",
+            (user_id,)
+        )
         conn.commit()
         conn.close()
 
-    def _format_time(self, timestamp_str):
-        """Format timestamp for display"""
-        try:
-            now = datetime.datetime.now()
-            timestamp = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+    def add_notification(self, user_id, title, message, category=None, priority='normal'):
+        """Add a new notification for a user"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
 
-            # If from today, show only time
-            if timestamp.date() == now.date():
-                return f"Today {timestamp.strftime('%H:%M')}"
+        cursor.execute(
+            "INSERT INTO notifications (user_id, title, message, category, priority) VALUES (?, ?, ?, ?, ?)",
+            (user_id, title, message, category, priority)
+        )
 
-            # If from yesterday
-            yesterday = now.date() - datetime.timedelta(days=1)
-            if timestamp.date() == yesterday:
-                return f"Yesterday {timestamp.strftime('%H:%M')}"
+        notification_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
 
-            # If from this year
-            if timestamp.year == now.year:
-                return timestamp.strftime("%b %d, %H:%M")
+        return notification_id
 
-            # Otherwise, full date
-            return timestamp.strftime("%b %d, %Y")
+    def add_sample_notifications(self, user_id):
+        """Add some sample notifications for testing"""
+        # Clear existing sample notifications for this user
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM notifications WHERE user_id = ?", (user_id,))
+        conn.commit()
 
-        except (ValueError, TypeError):
-            return timestamp_str  # Return as-is if parsing fails
+        # Sample notifications with different timestamps
+        now = datetime.now()
+        samples = [
+            (user_id, "New Products", "5 new brake pads added to inventory", "inventory",
+             "normal", now),
+            (user_id, "Low Stock Alert", "Oil filters (ACME #F100) are low", "inventory",
+             "high", now - timedelta(hours=5)),
+            (user_id, "System Update", "Maintenance tonight at 11 PM", "system", "normal",
+             now - timedelta(days=1)),
+            (user_id, "Payment Received", "Customer #1432 payment processed", "sales",
+             "normal", now - timedelta(days=2)),
+            (user_id, "New Feature Available", "Check out the new reporting system",
+             "system", "normal", now - timedelta(days=3)),
+        ]
+
+        cursor.executemany(
+            "INSERT INTO notifications (user_id, title, message, category, priority, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+            samples
+        )
+        conn.commit()
+        conn.close()

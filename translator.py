@@ -1,6 +1,86 @@
 # translator.py
 
 TRANSLATIONS = {
+# In translations.py, add this to your TRANSLATIONS dictionary:
+
+ 'app_title_1': {
+        'en': 'Abu Mukh Car Parts',
+        'he': 'חלקי חילוף אבו מוך'
+    },
+    'app_title_2': {
+        'en': 'The King of Spare Car Parts',
+        'he': 'מלך חלקי החילוף'
+    },
+    'app_title_3': {
+        'en': 'The Best in the Market',
+        'he': 'הכי טוב שיש'
+    },
+
+'product_details': {
+        'en': 'Product Details',
+        'he': 'פרטי מוצר'
+    },
+    # ... existing entries ...
+    'search_options': {
+        'en': "Search Options",
+        'he': "אפשרויות חיפוש"
+    },
+    'expand_search': {
+        'en': "Expand Search",
+        'he': "הרחב חיפוש"
+    },
+    'chat': {
+        'en': "Chat",
+        'he': "שיחה"
+    },
+    'chat_assistant': {
+        'en': "Chat Assistant",
+        'he': "עוזר שיחה"
+    },
+    'expand_chat': {
+        'en': "Expand Chat",
+        'he': "הרחב שיחה"
+    },
+    'popout_chat': {
+        'en': "Popout Chat",
+        'he': "שיחה קופצת"
+    },
+    'close': {
+        'en': "Close",
+        'he': "סגור"
+    },
+    'type_message': {
+        'en': "Type your message",
+        'he': "הקלד את ההודעה שלך"
+    },
+    'send': {
+        'en': "Send",
+        'he': "שלח"
+    },
+    'notifications': {
+        'en': "Notifications",
+        'he': "התראות"
+    },
+    'popout_notifications': {
+        'en': "Popout Notifications",
+        'he': "התראות קופצות"
+    },
+    'mark_all_read': {
+        'en': "Mark all as read",
+        'he': "סמן הכל כנקרא"
+    },
+    'expand': {
+        'en': "Expand",
+        'he': "הרחב"
+    },
+    'see_all_notifications': {
+        'en': "See all notifications",
+        'he': "ראה את כל ההתראות"
+    },
+    'status_ready': {
+        'en': "Status: Ready",
+        'he': "סטטוס: מוכן"
+    },
 'product_details': {
         'en': 'Product Details',
         'he': 'פרטי מוצר'
