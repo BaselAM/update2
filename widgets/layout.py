@@ -1,118 +1,70 @@
-from shared_imports import *
-from translator import Translator
-from themes import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, \
+    QSpacerItem, QSizePolicy
+from PyQt5.QtGui import QPixmap
 
-# Add these imports if they're not already present
-from PyQt5.QtCore import Qt, QSize, QTimer, QTime
-from PyQt5.QtGui import QIcon
-from pathlib import Path
+from shared import SCRIPT_DIR
+from themes import get_color
 
 
 class HeaderWidget(QWidget):
-    def __init__(self, translator, home_function=None):
+    """The header widget shown at the top of the application"""
+
+    def __init__(self, translator, home_callback=None):
         super().__init__()
         self.translator = translator
-        self.home_function = home_function
+        self.home_callback = home_callback
         self.setup_ui()
         self.apply_theme()
 
     def setup_ui(self):
+        # Create layout for header
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(15, 8, 15, 8)
+        layout.setContentsMargins(10, 5, 10, 5)
 
-        # Left section with logo and home button
-        left_section = QHBoxLayout()
-        left_section.setSpacing(12)
+        # Add spacer at the beginning to center the title
+        layout.addStretch(1)
 
-        # Add application logo/icon
-        self.logo_label = QLabel()
-        logo_path = Path("resources/car-icon.jpg")
-        if logo_path.exists():
-            logo_pixmap = QPixmap(str(logo_path)).scaled(32, 32, Qt.KeepAspectRatio,
-                                                         Qt.SmoothTransformation)
-            self.logo_label.setPixmap(logo_pixmap)
-        self.logo_label.setFixedSize(32, 32)
-        left_section.addWidget(self.logo_label)
+        # Title in the center (now the main element in the header)
+        self.title_label = QLabel(self.translator.t("app_header_title"))
+        self.title_label.setStyleSheet("font-size: 20pt; font-weight: bold;")
+        layout.addWidget(self.title_label)
 
-        # Add home button with custom icon - CHECK FOR THE NEW DOWNLOADED ICON FIRST
-        self.home_button = QPushButton()
+        # Add spacer at the end to center the title
+        layout.addStretch(1)
 
-        # Try these paths in order
-        home_icon_paths = [
-            Path("resources/blue_home_icon.png"),
-            Path("resources/home_icon.png"),
-            Path("resources/home.jpg")
-        ]
-
-        icon_set = False
-        for icon_path in home_icon_paths:
-            if icon_path.exists():
-                icon = QIcon(str(icon_path))
-                self.home_button.setIcon(icon)
-                self.home_button.setIconSize(QSize(24, 24))
-                print(f"Using home icon from: {icon_path}")
-                icon_set = True
-                break
-
-        if not icon_set:
-            self.home_button.setText("🏠")
-            print("No home icon found! Using fallback emoji.")
-
-        self.home_button.setFixedSize(40, 40)
-        self.home_button.setToolTip(self.translator.t('home_button_tooltip'))
-        self.home_button.setCursor(Qt.PointingHandCursor)
-
-        if self.home_function:
-            self.home_button.clicked.connect(self.home_function)
-
-        left_section.addWidget(self.home_button)
-        left_section.addStretch()
-
-        # Create title label with elegant font
-        self.title_label = QLabel(self.translator.t('header_title'))
-        title_font = QFont("Segoe UI", 16)
-        title_font.setBold(True)
-        self.title_label.setFont(title_font)
-
-        # Add spacer to center the title
-        layout.addLayout(left_section)
-        layout.addWidget(self.title_label, 1, Qt.AlignCenter)
-        layout.addStretch()
+        # Set a fixed height for the header
+        self.setFixedHeight(50)
 
     def apply_theme(self):
         header_bg = get_color('header')
         text_color = get_color('text')
-        accent_color = get_color('highlight')
 
         self.setStyleSheet(f"""
-            HeaderWidget {{
-                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                         stop:0 {header_bg}, stop:1 {QColor(header_bg).darker(105).name()});
-                border-bottom: 1px solid {get_color('border')};
-            }}
-            QLabel {{
+            QWidget {{
+                background-color: {header_bg};
                 color: {text_color};
             }}
             QPushButton {{
                 background-color: transparent;
+                color: {text_color};
                 border: none;
-                border-radius: 20px;
-                padding: 8px;
+                padding: 8px 16px;
+                font-size: 14pt;
+                text-align: center;
             }}
             QPushButton:hover {{
-                background-color: {QColor(accent_color).lighter(150).name()};
-            }}
-            QPushButton:pressed {{
-                background-color: {QColor(accent_color).lighter(130).name()};
+                background-color: {get_color('button_hover')};
             }}
         """)
 
     def update_translations(self):
-        """Update text when language changes"""
-        self.title_label.setText(self.translator.t('header_title'))
-        self.home_button.setToolTip(self.translator.t('home_button_tooltip'))
+        self.title_label.setText(self.translator.t("app_header_title"))
+
 
 class FooterWidget(QWidget):
+    """The footer widget shown at the bottom of the application"""
+
     def __init__(self, translator):
         super().__init__()
         self.translator = translator
@@ -120,34 +72,69 @@ class FooterWidget(QWidget):
         self.apply_theme()
 
     def setup_ui(self):
-        self.setFixedHeight(40)
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(20, 0, 20, 0)
+        layout.setContentsMargins(10, 5, 10, 5)
 
-        self.label = QLabel()
-        self.label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.label)
+        self.status_label = QLabel(self.translator.t("status_ready"))
+        layout.addWidget(self.status_label)
 
-        self.update_translations()
+        layout.addStretch()
+
+        self.version_label = QLabel(f"v1.0.0")
+        layout.addWidget(self.version_label)
+
+        self.setFixedHeight(30)
 
     def apply_theme(self):
+        footer_bg = get_color('footer')
+        text_color = get_color('text')
+
         self.setStyleSheet(f"""
-            background-color: {get_color('footer')};
-            border-top: 2px solid {get_color('border')};
-        """)
-        self.label.setStyleSheet(f"""
-            color: {get_color('text')};
-            font-size: 14px;
+            QWidget {{
+                background-color: {footer_bg};
+                color: {text_color};
+            }}
         """)
 
     def update_translations(self):
-        # Use self.translator to update the footer text
-        self.label.setText(self.translator.t('footer_content'))
+        self.status_label.setText(self.translator.t("status_ready"))
 
 
-class CopyrightWidget(QLabel):
+class CopyrightWidget(QWidget):
+    """A small copyright notice at the bottom of the application"""
+
     def __init__(self, translator):
-        super().__init__(translator.t('copyright'))
-        self.setAlignment(Qt.AlignCenter)
-        self.setStyleSheet(
-            "color: rgba(255,255,255,0.6); font-size: 14px; margin: 20px 0 10px 0;")
+        super().__init__()
+        self.translator = translator
+        self.setup_ui()
+        self.apply_theme()
+
+    def setup_ui(self):
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 2, 0, 2)
+
+        copyright_text = "© 2023 Auto Parts Ltd. All rights reserved."
+        self.copyright_label = QLabel(copyright_text)
+        self.copyright_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.copyright_label)
+
+        self.setFixedHeight(20)
+
+    def apply_theme(self):
+        bg_color = get_color('background')
+        text_color = get_color('text')
+
+        self.setStyleSheet(f"""
+            QWidget {{
+                background-color: {bg_color};
+                color: {text_color};
+            }}
+            QLabel {{
+                font-size: 8pt;
+                color: {text_color};
+            }}
+        """)
+
+    def update_translations(self):
+        # No translation needed for copyright
+        pass
