@@ -182,6 +182,107 @@ class CarPartsDB:
         """Create new connection for each operation"""
         return sqlite3.connect(self.db_path)
 
+    def get_unique_cars(self):
+        """Get a list of unique cars in the database"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("""
+                SELECT DISTINCT make, model, year 
+                FROM car_parts 
+                ORDER BY make, model, year
+            """)
+
+            cars = []
+            for row in cursor.fetchall():
+                cars.append({
+                    'make': row[0],
+                    'model': row[1],
+                    'year': row[2]
+                })
+
+            return cars
+        except Exception as e:
+            print(f"Database error in get_unique_cars: {str(e)}")
+            return []
+
+    def get_products_for_car(self, make, model, year):
+        """Get products for a specific car"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("""
+                SELECT id, name, category, price, quantity 
+                FROM car_parts 
+                WHERE make = ? AND model = ? AND year = ?
+                ORDER BY category, name
+            """, (make, model, year))
+
+            products = []
+            for row in cursor.fetchall():
+                products.append({
+                    'id': row[0],
+                    'name': row[1],
+                    'category': row[2],
+                    'price': row[3],
+                    'quantity': row[4]
+                })
+
+            return products
+        except Exception as e:
+            print(f"Database error in get_products_for_car: {str(e)}")
+            return []
+
+    def get_manufacturers(self, category):
+        """Get manufacturers for a specific part category"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("""
+                SELECT DISTINCT manufacturer 
+                FROM car_parts 
+                WHERE category = ?
+                ORDER BY manufacturer
+            """, (category,))
+
+            manufacturers = [row[0] for row in cursor.fetchall()]
+            return manufacturers
+        except Exception as e:
+            print(f"Database error in get_manufacturers: {str(e)}")
+            return ["OEM", "Aftermarket", "Generic"]  # Default fallback
+
+    def get_materials(self, category):
+        """Get materials for a specific part category"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("""
+                SELECT DISTINCT material 
+                FROM car_parts 
+                WHERE category = ?
+                ORDER BY material
+            """, (category,))
+
+            materials = [row[0] for row in cursor.fetchall()]
+            return materials
+        except Exception as e:
+            print(f"Database error in get_materials: {str(e)}")
+            return ["Metal", "Plastic", "Rubber", "Composite"]  # Default fallback
+
+    def get_product_image(self, product_id):
+        """Get image data for a specific product"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("""
+                SELECT image_data 
+                FROM car_part_images 
+                WHERE part_id = ?
+            """, (product_id,))
+
+            row = cursor.fetchone()
+            if row and row[0]:
+                return row[0]  # Return binary image data
+            return None
+        except Exception as e:
+            print(f"Database error in get_product_image: {str(e)}")
+            return None
+
 if __name__ == "__main__":
     # Create an instance of the database
     db = CarPartsDB()
@@ -215,3 +316,4 @@ if __name__ == "__main__":
     for part in parts:
         print(part)
     db.close_connection()
+

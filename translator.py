@@ -2,6 +2,24 @@
 
 TRANSLATIONS = {
 # In translations.py, add this to your TRANSLATIONS dictionary:
+'parts_navigation_title': {
+    'en': "Parts Selection Wizard",
+    'he': "אשף בחירת חלקים"
+},
+'select_car': {
+    'en': "Select a Car",
+    'he': "בחר רכב"
+},
+'search_cars': {
+    'en': "Search:",
+    'he': "חיפוש:"
+},
+'search_cars_placeholder': {
+    'en': "Search by make, model or year...",
+    'he': "חפש לפי יצרן, דגם או שנה..."
+},'select_car_help': {
+    'en': "Choose the car you need parts for",
+    'he': "בחר את הרכב שעבורו אתה צריך חלק"},
  'settings_page': {'en':"Settings Page", 'he':'דף הגדרות' },
  'app_title_1': {
         'en': 'Abu Mukh Car Parts',
@@ -358,7 +376,6 @@ TRANSLATIONS = {
     'low_stock_threshold': {'en': "Low Stock Threshold", 'he': "סף מלאי נמוך"},
     'default_currency': {'en': "Default Currency", 'he': "מטבע ברירת מחדל"},
     'enable_auto_restock': {'en': "Enable Auto Restock", 'he': "הפעל חידוש אוטומטי"},
-    'products_button': {'en': "Products", 'he': "חלקים"},
     'products_list_button': {'en': "Products List", 'he': "רשימת חלקים"},
     'statistics_button': {'en': "Statistics", 'he': "סטטיסטיקה"},
     'settings_button': {'en': "Settings", 'he': "הגדרות"},

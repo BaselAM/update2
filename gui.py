@@ -19,6 +19,9 @@ from translator import Translator
 from database.settings_db import SettingsDB
 from database.car_parts_db import CarPartsDB
 from themes import set_theme, get_color
+# Add these imports near the top of gui.py
+from widgets.parts_navigation import PartsNavigationContainer
+from PyQt5.QtWidgets import QMessageBox  # Make sure this is imported
 
 
 class GUI(QMainWindow):
@@ -63,7 +66,9 @@ class GUI(QMainWindow):
         self.statistics_widget = StatisticsWidget(self.translator)
         self.settings_widget = SettingsWidget(self.translator, self.update_language, self)
         self.help_widget = HelpWidget(self.translator)
-
+        # Add this line:
+        self.parts_navigation_widget = PartsNavigationContainer(self.translator,
+                                                                self.parts_db)
     def setup_ui(self):
         """Create and arrange all UI components"""
         navigation_functions = {
@@ -96,6 +101,8 @@ class GUI(QMainWindow):
         self.content_stack.addWidget(self.statistics_widget)
         self.content_stack.addWidget(self.settings_widget)
         self.content_stack.addWidget(self.help_widget)
+        # Add this line right here:
+        self.content_stack.addWidget(self.parts_navigation_widget)
 
         # Main layout
         main_widget = QWidget()
@@ -261,10 +268,13 @@ class GUI(QMainWindow):
             sys.exit(1)
 
     def show_parts(self):
-        """Open the parts management screen"""
-        # You'll need to implement this view
-        QMessageBox.information(self, "Parts",
-                                "Parts management feature will be available soon")
+        """Open the parts navigation system"""
+        try:
+            self.content_stack.setCurrentWidget(self.parts_navigation_widget)
+        except Exception as e:
+            print(f"Error showing parts navigation: {str(e)}")
+            QMessageBox.warning(self, "Parts Navigation",
+                                f"Could not load parts navigation: {str(e)}")
 
     def show_web_search(self):
         """Open web search for car parts"""
