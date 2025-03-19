@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QStackedLayout, QGraphicsOpacityEffect, QTableWidget, QHeaderView, QTableWidgetItem,
     QLineEdit, QPushButton, QScrollArea, QFormLayout, QComboBox, QColorDialog,
     QGroupBox, QAction, QGridLayout,  QListWidget, QStyledItemDelegate,
-    QMessageBox, QDialog, QDialogButtonBox, QCompleter,QAbstractItemView,QCheckBox,QSizePolicy,QFrame,QSpinBox,QDoubleSpinBox,QTextEdit
+    QMessageBox, QDialog, QDialogButtonBox, QCompleter,QAbstractItemView,QCheckBox,QSizePolicy,QFrame,QSpinBox,QDoubleSpinBox,QTextEdit,QBoxLayout
 )
 from datetime import datetime
 import time

@@ -2,7 +2,7 @@
 
 TRANSLATIONS = {
 # In translations.py, add this to your TRANSLATIONS dictionary:
-
+ 'settings_page': {'en':"Settings Page", 'he':'דף הגדרות' },
  'app_title_1': {
         'en': 'Abu Mukh Car Parts',
         'he': 'חלקי חילוף אבו מוך'
