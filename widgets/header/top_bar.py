@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
-from .search_widget import SearchWidget
+from .search_widget import SimpleElegantSearchWidget
 from .notifications_widget import NotificationsWidget
 from .navigation_widget import NavigationWidget
 from .chat_widget import ChatWidget
@@ -9,7 +9,7 @@ from themes import get_color
 
 
 class TopBarWidget(QWidget):
-    """Main top bar widget that combines search, notifications, chat, and navigation"""
+    """Main top bar widget with premium components"""
     search_submitted = pyqtSignal(str)
     home_clicked = pyqtSignal()
     notification_clicked = pyqtSignal()
@@ -34,8 +34,8 @@ class TopBarWidget(QWidget):
         # Create luxury date and time widget
         self.date_time_widget = LuxuryDateTimeWidget(self.translator)
 
-        # Create search widget with expanded functionality
-        self.search_widget = SearchWidget(self.translator, self.database)
+        # Create simplified but elegant search widget
+        self.search_widget = SimpleElegantSearchWidget(self.translator, self.database)
         self.search_widget.search_submitted.connect(self.search_submitted)
 
         # Create chat widget with expandable chat interface
@@ -46,7 +46,7 @@ class TopBarWidget(QWidget):
         self.notifications_widget = NotificationsWidget(self.translator)
         self.notifications_widget.notification_clicked.connect(self.notification_clicked)
 
-        # Arrange components with proper spacing
+        # Arrange components with elegant spacing
         main_layout.addWidget(self.navigation_widget)
 
         # Add date and time widget aligned to the left
