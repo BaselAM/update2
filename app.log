@@ -2742,3 +2742,27 @@
 2025-03-20 19:51:47,279 - main - INFO - Cleaning up application resources...
 2025-03-20 19:51:47,279 - main - INFO - Closing database connection...
 2025-03-20 19:51:47,279 - main - INFO - Application shutdown complete
+2025-03-20 20:00:19,394 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-20 20:00:19,394 - main - INFO - Current user: BaselAM
+2025-03-20 20:00:19,460 - main - WARNING - Missing icon file: add_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: select_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: export_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: info_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: success_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: error_icon.png
+2025-03-20 20:00:19,461 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-20 20:00:19,462 - main - WARNING - Missing icon file: close_icon.png
+2025-03-20 20:00:19,462 - main - INFO - Initializing database connection...
+2025-03-20 20:00:19,472 - CarPartsDB - INFO - Thread 12104: Database connection established
+2025-03-20 20:00:19,472 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-20 20:00:19,472 - CarPartsDB - INFO - Thread 12104: Fetching all parts
+2025-03-20 20:00:19,486 - main - INFO - Connected to database. Found 2851 parts.
+2025-03-20 20:00:20,828 - CarPartsDB - INFO - Thread 7460: Database connection established
+2025-03-20 20:00:20,829 - CarPartsDB - INFO - Thread 7460: Fetching all parts
+2025-03-20 20:00:27,321 - main - INFO - User logged in: abumukh
+2025-03-20 20:00:40,152 - main - INFO - Cleaning up application resources...
+2025-03-20 20:00:40,153 - main - INFO - Closing database connection...
+2025-03-20 20:00:40,153 - main - INFO - Application shutdown complete
