@@ -413,7 +413,6 @@ TRANSLATIONS = {
     'header_title': {'en': "Welcome to Abu Mukh Car Parts", 'he': "ברוכים הבאים לאבו מוך חלפי רכב"}
 }
 
-
 class Translator:
     def __init__(self, language='en'):
         self.language = language

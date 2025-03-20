@@ -27,12 +27,13 @@ from PyQt5.QtWidgets import QMessageBox  # Make sure this is imported
 class GUI(QMainWindow):
     language_changed = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, car_parts_db=None):
         super().__init__()
         # Initialize databases
         self.settings_db = SettingsDB()
-        self.parts_db = CarPartsDB()
 
+        # Use provided database instance or create a new one
+        self.parts_db = car_parts_db if car_parts_db else CarPartsDB()
         # Load theme
         saved_theme = self.settings_db.get_setting('theme', 'classic')
         set_theme(saved_theme)
