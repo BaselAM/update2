@@ -11,22 +11,7 @@ from PyQt5.QtGui import QColor, QPixmap
 from themes import get_color
 from shared import SCRIPT_DIR
 
-class ItemDetailsDialog(QDialog):
-    def __init__(self, item_data, translator, parent=None):
-        super().__init__(parent)
-        self.item_data = item_data
-        self.translator = translator
-        self.setWindowTitle("Item Details")  # You can translate this too
-        self.setup_ui()
 
-    def setup_ui(self):
-        layout = QVBoxLayout(self)
-        # Assuming item_data is a dict with your fields
-        for key, value in self.item_data.items():
-            layout.addWidget(QLabel(f"{key}: {value}"))
-        btn_box = QDialogButtonBox(QDialogButtonBox.Ok)
-        btn_box.accepted.connect(self.accept)
-        layout.addWidget(btn_box)
 
 
 class AddProductDialog(QDialog):
