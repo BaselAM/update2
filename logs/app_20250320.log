@@ -1,0 +1,27 @@
+2025-03-20 16:38:03,430 - root - INFO - Application started at 2025-03-20 16:38:03
+2025-03-20 16:38:03,430 - root - INFO - Log file: C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\logs\app_20250320.log
+2025-03-20 16:38:03,431 - main - INFO - Application starting at: 2025-03-20 16:38:03
+2025-03-20 16:38:03,431 - main - INFO - Current user: 97253
+2025-03-20 16:38:03,494 - main - WARNING - Missing icon file: add_icon.png
+2025-03-20 16:38:03,494 - main - WARNING - Missing icon file: select_icon.png
+2025-03-20 16:38:03,494 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: export_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: info_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: success_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: error_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-20 16:38:03,495 - main - WARNING - Missing icon file: close_icon.png
+2025-03-20 16:38:03,495 - main - INFO - Initializing database connection...
+2025-03-20 16:38:03,505 - database.car_parts_db - INFO - Thread 3020: Database connection established
+2025-03-20 16:38:03,505 - database.car_parts_db - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-20 16:38:03,506 - database.car_parts_db - INFO - Thread 3020: Database connection established
+2025-03-20 16:38:03,506 - database.car_parts_db - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-20 16:38:03,506 - database.car_parts_db - INFO - Thread 3020: Fetching all parts
+2025-03-20 16:38:03,517 - main - INFO - Connected to database. Found 2852 parts.
+2025-03-20 16:38:03,681 - main - CRITICAL - Fatal error: __init__() got an unexpected keyword argument 'car_parts_db'
+Traceback (most recent call last):
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\main.py", line 125, in main
+    main_gui = GUI(car_parts_db=db_instance)
+TypeError: __init__() got an unexpected keyword argument 'car_parts_db'

@@ -863,13 +863,25 @@ class ProductsWidget(QWidget):
             self.status_bar.show_message(self.translator.t('export_error'), "error")
 
     def on_cell_changed(self, row, column):
-        """Handle cell edits with improved error handling"""
+        """Handle cell edits with protection against infinite loops"""
+        # Ignore invalid indices
         if row < 0 or column < 0 or row >= self.table.rowCount() or column >= self.table.columnCount():
             return
 
         # Ignore edits to ID column
         if column == 0:
             return
+
+        # Create a class-level flag if it doesn't exist to prevent re-entrancy
+        if not hasattr(self, '_is_updating_cell'):
+            self._is_updating_cell = False
+
+        # If we're already handling an update, ignore this event
+        if self._is_updating_cell:
+            return
+
+        # Set the flag to indicate we're updating
+        self._is_updating_cell = True
 
         try:
             # Get the cell items
@@ -899,74 +911,178 @@ class ProductsWidget(QWidget):
             if not field:
                 return
 
-            # Get the new value
-            new_value = item.text().strip()
+            # Get original part data
+            original_part = self.db.get_part(part_id)
+            if not original_part:
+                print(f"Warning: Could not find part with ID {part_id}")
+                return
 
-            # For numeric fields, validate and convert
+            # Get the new value from the cell
+            new_text = item.text().strip()
+
+            # Get original value for comparison (based on column index)
+            original_value = original_part[column]
+
+            # Safe conversion for numeric fields
             if field == 'quantity':
                 try:
-                    new_value = int(new_value)
+                    # Convert to int but keep as string for comparison
+                    new_value = int(new_text)
+                    new_text = str(new_value)  # Convert back to string for comparison
+
+                    # Check if value has actually changed
+                    if str(original_value) == new_text:
+                        print(
+                            f"No change in quantity for part #{part_id}: {original_value}")
+                        return
+
                 except ValueError:
-                    # Silently revert to 0 for invalid quantity
+                    print(f"Invalid quantity value: {new_text}")
+                    # Block signals before reverting
                     self.table.blockSignals(True)
-                    item.setText('0')
+                    item.setText(str(original_value))
                     self.table.blockSignals(False)
-                    new_value = 0
+                    return
 
             elif field == 'price':
                 try:
-                    new_value = float(new_value)
+                    # Convert to float for validation
+                    new_value = float(new_text)
+
+                    # Format for display and comparison
+                    formatted_value = f"{new_value:.2f}"
+
+                    # Check if value has actually changed (after formatting)
+                    if f"{float(original_value):.2f}" == formatted_value:
+                        print(f"No change in price for part #{part_id}: {original_value}")
+                        return
+
                 except ValueError:
-                    # Silently revert to 0.0 for invalid price
+                    print(f"Invalid price value: {new_text}")
+                    # Block signals before reverting
                     self.table.blockSignals(True)
-                    item.setText('0.0')
+                    item.setText(str(original_value))
                     self.table.blockSignals(False)
-                    new_value = 0.0
+                    return
 
-            # For product name, don't allow empty
-            if field == 'product_name' and not new_value:
-                # Revert to original product name or placeholder
-                original_part = self.db.get_part(part_id)
-                original_name = original_part[4] if original_part else "Product"
+            else:
+                # For text fields, direct string comparison
+                if str(original_value) == new_text:
+                    print(f"No change in {field} for part #{part_id}")
+                    return
 
-                self.table.blockSignals(True)
-                item.setText(original_name)
-                self.table.blockSignals(False)
-                return
+                # For product name, don't allow empty
+                if field == 'product_name' and not new_text:
+                    print(f"Empty product name not allowed for part #{part_id}")
+                    # Block signals before reverting
+                    self.table.blockSignals(True)
+                    item.setText(str(original_value) if original_value else "Product")
+                    self.table.blockSignals(False)
+                    return
+
+                # Use the text value for non-numeric fields
+                new_value = new_text
+
+            # Log the change
+            print(
+                f"Updating part #{part_id} - {field}: '{original_value}' -> '{new_value}'")
 
             # Update in database
             update_data = {field: new_value}
             success = self.db.update_part(part_id, **update_data)
 
-            # Update the in-memory product list
+            # Only update UI if database update was successful
             if success:
-                for i, prod in enumerate(self.all_products):
-                    if prod[0] == part_id:
-                        # Convert to list, update, convert back to tuple
-                        prod_list = list(prod)
-                        if column == 5:  # quantity
-                            prod_list[5] = int(new_value)
-                        elif column == 6:  # price
-                            prod_list[6] = float(new_value)
-                        else:
-                            prod_list[column] = new_value
-                        self.all_products[i] = tuple(prod_list)
-                        break
+                # Properly format the cell display
+                self.table.blockSignals(True)
+                try:
+                    if field == 'quantity':
+                        item.setText(str(int(new_value)))
+                    elif field == 'price':
+                        item.setText(f"{float(new_value):.2f}")
 
-                # If updating quantity/price, format the cell correctly
-                if field == 'quantity':
-                    self.table.blockSignals(True)
-                    item.setText(str(int(new_value)))
+                    # Update in-memory data
+                    for i, prod in enumerate(self.all_products):
+                        if prod[0] == part_id:
+                            # Convert to list, update, convert back to tuple
+                            prod_list = list(prod)
+                            if column == 5:  # quantity
+                                prod_list[5] = int(new_value)
+                            elif column == 6:  # price
+                                prod_list[6] = float(new_value)
+                            else:
+                                prod_list[column] = new_value
+                            self.all_products[i] = tuple(prod_list)
+                            break
+
+                    # Show success feedback without modifying the cell text again
+                    item.setBackground(QColor(get_color('highlight')))
+                    QTimer.singleShot(500, lambda: item.setBackground(
+                        QColor(get_color('background'))))
+
+                finally:
                     self.table.blockSignals(False)
-                elif field == 'price':
-                    self.table.blockSignals(True)
-                    item.setText(f"{float(new_value):.2f}")
+
+                print(f"Successfully updated part #{part_id}")
+            else:
+                # Revert to original value on failure
+                self.table.blockSignals(True)
+                try:
+                    if column == 5:  # quantity
+                        item.setText(str(int(original_value)))
+                    elif column == 6:  # price
+                        item.setText(f"{float(original_value):.2f}")
+                    else:
+                        item.setText(
+                            str(original_value) if original_value is not None else "")
+
+                    # Show error feedback
+                    item.setBackground(QColor(get_color('error')))
+                    QTimer.singleShot(800, lambda: item.setBackground(
+                        QColor(get_color('background'))))
+                finally:
                     self.table.blockSignals(False)
+
+                print(f"Failed to update part #{part_id}")
 
         except Exception as e:
-            print(f"Error handling cell change: {e}")
+            print(f"Error in cell change handler: {e}")
             import traceback
             print(traceback.format_exc())
+        finally:
+            # Always clear the update flag when we're done
+            self._is_updating_cell = False
+
+    def _safe_revert_cell(self, row, column):
+        """Safely revert a cell to its original value with minimal operations"""
+        try:
+            self.table.blockSignals(True)
+            id_item = self.table.item(row, 0)
+            if id_item:
+                try:
+                    part_id = int(id_item.text())
+                    part = self.db.get_part(part_id)
+
+                    if part and column < len(part):
+                        # Format value based on column type
+                        val = ""
+                        if column == 0:
+                            val = str(part[0])
+                        elif column in [1, 2, 3, 4]:
+                            val = str(part[column]) if part[column] else "-"
+                        elif column == 5:
+                            val = str(int(part[5]))
+                        elif column == 6:
+                            val = f"{float(part[6]):.2f}"
+
+                        # Update the cell
+                        item = self.table.item(row, column)
+                        if item:
+                            item.setText(val)
+                except Exception:
+                    pass  # Silently fail to avoid further issues
+        finally:
+            self.table.blockSignals(False)
 
     def show_error_effect(self, row, column):
         """Visual feedback for errors"""
@@ -995,7 +1111,9 @@ class ProductsWidget(QWidget):
             original_fg = item.foreground()
             item.setBackground(QColor(get_color('highlight')))
             item.setForeground(QColor(get_color('background')))
-            QTimer.singleShot(500, lambda: self.clear_update_effect(row, column, original_bg, original_fg))
+            QTimer.singleShot(500,
+                              lambda: self.clear_update_effect(row, column, original_bg,
+                                                               original_fg))
 
     def clear_update_effect(self, row, column, bg, fg):
         """Clear update highlight"""
@@ -1003,25 +1121,6 @@ class ProductsWidget(QWidget):
         if item:
             item.setBackground(bg)
             item.setForeground(fg)
-
-    def _refresh_row(self, row, data):
-        self.table.blockSignals(True)
-        try:
-            for col in range(7):
-                if col == 0:
-                    val = str(data[0])
-                elif col in [1, 2, 3, 4]:
-                    val = str(data[col]) if data[col] else "-"
-                elif col == 5:
-                    val = str(int(data[5]))
-                elif col == 6:
-                    val = f"{float(data[6]):.2f}"
-                else:
-                    val = ""
-                if self.table.item(row, col):
-                    self.table.item(row, col).setText(val)
-        finally:
-            self.table.blockSignals(False)
 
     def _revert_cell(self, row, column):
         self.table.blockSignals(True)
@@ -1045,8 +1144,29 @@ class ProductsWidget(QWidget):
                         self.table.item(row, column).setText(val)
         except Exception as e:
             print(f"Error reverting cell: {e}")
+            logging.error(f"Error reverting cell: {e}")
         finally:
             self.table.blockSignals(False)
+
+    def _refresh_row(self, row, data):
+        self.table.blockSignals(True)
+        try:
+            for col in range(7):
+                if col == 0:
+                    val = str(data[0])
+                elif col in [1, 2, 3, 4]:
+                    val = str(data[col]) if data[col] else "-"
+                elif col == 5:
+                    val = str(int(data[5]))
+                elif col == 6:
+                    val = f"{float(data[6]):.2f}"
+                else:
+                    val = ""
+                if self.table.item(row, col):
+                    self.table.item(row, col).setText(val)
+        finally:
+            self.table.blockSignals(False)
+
 
     def show_add_dialog(self):
         try:

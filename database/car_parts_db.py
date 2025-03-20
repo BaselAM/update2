@@ -240,21 +240,75 @@ class CarPartsDB:
                 return []
 
     def update_part(self, part_id, **kwargs):
-        """Update a part"""
+        """Update a part with detailed audit logging"""
         with self.lock:
             self.ensure_connection()
             try:
+                # First, get the original part data for comparison
+                self.local.cursor.execute("SELECT * FROM parts WHERE id = ?", (part_id,))
+                original_part = self.local.cursor.fetchone()
+
+                if not original_part:
+                    self.logger.warning(
+                        f"Attempted to update non-existent part #{part_id}")
+                    return False
+
+                # Build the update query
                 set_clause = ', '.join([f"{k} = ?" for k in kwargs.keys()])
+                set_clause += ", last_updated = CURRENT_TIMESTAMP"  # Always update timestamp
                 values = list(kwargs.values()) + [part_id]
+
+                # Execute the update
                 self.local.cursor.execute(f"""
                     UPDATE parts 
                     SET {set_clause}
                     WHERE id = ?
                 """, values)
                 self.local.conn.commit()
-                return self.local.cursor.rowcount > 0
+
+                # Check if update was successful
+                if self.local.cursor.rowcount > 0:
+                    # Log what specifically changed
+                    thread_id = threading.get_ident()
+                    changes = []
+
+                    # Get column names for reference
+                    self.local.cursor.execute("PRAGMA table_info(parts)")
+                    columns = {row[0]: row[1] for row in self.local.cursor.fetchall()}
+
+                    # Compare and log each changed field
+                    for key in kwargs:
+                        col_idx = None
+                        # Find the column index for this field
+                        for idx, name in columns.items():
+                            if name == key:
+                                col_idx = idx
+                                break
+
+                        if col_idx is not None and col_idx < len(original_part):
+                            old_value = original_part[col_idx]
+                            new_value = kwargs[key]
+
+                            if str(old_value) != str(new_value):
+                                # Use ASCII-compatible characters instead of Unicode arrow
+                                changes.append(f"{key}: '{old_value}' -> '{new_value}'")
+
+                    # Log the changes
+                    if changes:
+                        changes_str = ", ".join(changes)
+                        self.logger.info(
+                            f"Thread {thread_id}: Updated part #{part_id} - {changes_str}")
+                    else:
+                        self.logger.info(
+                            f"Thread {thread_id}: Updated part #{part_id} - no changes detected")
+
+                    return True
+                else:
+                    self.logger.warning(f"Update part #{part_id} - no rows affected")
+                    return False
+
             except sqlite3.Error as e:
-                self.logger.error(f"Database error: {e}")
+                self.logger.error(f"Database error updating part #{part_id}: {e}")
                 return False
 
     def delete_part(self, part_id):
