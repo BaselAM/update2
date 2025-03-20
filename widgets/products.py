@@ -1146,7 +1146,6 @@ class ProductsWidget(QWidget):
                     return
 
                 # Create and show confirmation dialog
-                # Use DeleteConfirmationDialog directly, not as a class attribute
                 dialog = DeleteConfirmationDialog(
                     products=product_details,
                     translator=self.translator,
@@ -1182,7 +1181,9 @@ class ProductsWidget(QWidget):
                         # Filter out deleted products from the cache
                         self.all_products = [p for p in self.all_products if
                                              p[0] not in deleted_ids]
-                        self.update_table_data(self.all_products)
+
+                        # Reload products from database to ensure consistency
+                        QTimer.singleShot(500, self.load_products)
 
                         # Visual feedback
                         self.table.setStyleSheet(f"""
@@ -1238,7 +1239,6 @@ class ProductsWidget(QWidget):
     def _batch_delete_products(self, product_list):
         """Process deletion in optimized batches to prevent memory issues"""
         deleted_ids = []
-        batch_size = 20  # Process in smaller batches
 
         # Create a single progress dialog
         progress = QProgressDialog(
@@ -1250,27 +1250,27 @@ class ProductsWidget(QWidget):
         progress.setMinimumDuration(500)
 
         try:
-            for i in range(0, len(product_list), batch_size):
+            for i, (pid, _) in enumerate(product_list):
                 if progress.wasCanceled():
                     break
 
-                # Process a batch
-                batch = product_list[i:i + batch_size]
-                for j, (pid, _) in enumerate(batch):
-                    progress_value = i + j
-                    progress.setValue(progress_value)
-                    QApplication.processEvents(
-                        QEventLoop.ExcludeUserInputEvents)  # Less intensive processing
+                progress.setValue(i)
+                QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
-                    if self.db.delete_part(pid):
-                        deleted_ids.append(pid)
+                # Use the improved delete_part method
+                if self.db.delete_part(pid):
+                    deleted_ids.append(pid)
 
-                # Force garbage collection after each batch
-                import gc
-                gc.collect()
+        except Exception as e:
+            # Log any exceptions
+            print(f"Error during batch deletion: {e}")
+            self.status_bar.show_message(
+                self.translator.t('delete_error'),
+                "error"
+            )
 
         finally:
-            # Ensure progress dialog is closed and cleaned up
+            # Ensure progress dialog is closed
             progress.setValue(len(product_list))
             progress.deleteLater()
 

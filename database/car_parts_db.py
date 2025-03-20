@@ -111,19 +111,26 @@ class CarPartsDB:
 
     def delete_part(self, part_id):
         """Delete a part by ID"""
-        conn = None
-        try:
-            conn = self.get_connection()
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM parts WHERE id = ?", (part_id,))
-            conn.commit()
-            return cursor.rowcount > 0
-        except sqlite3.Error as e:
-            print(f"Database error: {str(e)}")
-            return False
-        finally:
-            if conn:
-                conn.close()
+        with self.lock:  # Use the existing lock for thread safety
+            try:
+                if not self.conn:
+                    self.connect()
+
+                # Validate part_id to ensure it's a valid integer
+                if not isinstance(part_id, int) or part_id <= 0:
+                    print(f"Invalid part_id: {part_id}")
+                    return False
+
+                # Use the existing connection and cursor
+                self.cursor.execute("DELETE FROM parts WHERE id = ?", (part_id,))
+                self.conn.commit()
+
+                # Check if any rows were affected
+                return self.cursor.rowcount > 0
+
+            except sqlite3.Error as e:
+                print(f"Database error during deletion: {e}")
+                return False
 
     def delete_multiple_parts(self, part_ids):
         """Safe method to delete multiple parts"""
