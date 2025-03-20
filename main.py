@@ -139,3 +139,4 @@ if __name__ == "__main__":
         QMessageBox.critical(None, "Fatal Error",
                              f"An unrecoverable error occurred: {str(e)}")
         sys.exit(1)
+

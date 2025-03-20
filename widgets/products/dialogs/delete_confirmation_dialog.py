@@ -1,102 +1,107 @@
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QPushButton,
-                           QLabel, QScrollArea, QWidget)
-from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFrame)
 from PyQt5.QtCore import Qt
-from themes import get_color
+from PyQt5.QtGui import QIcon, QColor, QFont
 
-class DeleteConfirmationDialog(QDialog):
-    """Custom elegant delete confirmation dialog"""
+from themes import get_color
+from widgets.products.dialogs.base_dialog import ElegantDialog
+
+
+class DeleteConfirmationDialog(ElegantDialog):
+    """An elegant confirmation dialog for deleting products."""
 
     def __init__(self, products, translator, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle(translator.t('confirm_removal'))
-        self.setWindowIcon(QIcon("resources/delete_icon.png"))
-        self.setMinimumWidth(400)
+        super().__init__(translator, parent, title='confirm_delete')
+        self.setWindowTitle(self.translator.t('confirm_delete'))
+        self.setMinimumWidth(450)
+        self.products = products
+        self.setup_ui()
 
-        layout = QVBoxLayout()
+    def setup_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(20, 20, 20, 20)
 
-        # Header
-        header = QWidget()
-        header_layout = QHBoxLayout(header)
-        icon = QLabel()
-        icon.setPixmap(QIcon("resources/warning_icon.png").pixmap(32, 32))
-        header_layout.addWidget(icon)
-        title = QLabel(
-            f"<h3 style='color:{get_color('error')};'>{translator.t('confirm_removal')}</h3>")
-        header_layout.addWidget(title)
-        header_layout.addStretch()
-        layout.addWidget(header)
+        # Warning icon and title
+        title_layout = QHBoxLayout()
+        warning_icon = QLabel()
+        warning_icon.setPixmap(QIcon("resources/warning_icon.png").pixmap(48, 48))
+        warning_label = QLabel(self.translator.t('confirm_delete'))
+        warning_font = warning_label.font()
+        warning_font.setPointSize(16)
+        warning_font.setBold(True)
+        warning_label.setFont(warning_font)
+        title_layout.addWidget(warning_icon)
+        title_layout.addWidget(warning_label, 1)
+        main_layout.addLayout(title_layout)
 
-        # Content
-        content = QLabel(
-            translator.t('confirm_delete_count').format(count=len(products)))
-        layout.addWidget(content)
+        # Confirmation message
+        msg = self.translator.t('delete_confirmation').format(count=len(self.products))
+        confirmation_label = QLabel(msg)
+        confirmation_label.setWordWrap(True)
+        main_layout.addWidget(confirmation_label)
 
-        # Product list
-        scroll_area = QScrollArea()
-        scroll_content = QWidget()
-        scroll_layout = QVBoxLayout(scroll_content)
+        # List of products to delete (if not too many)
+        if len(self.products) <= 10:
+            products_frame = QFrame()
+            products_frame.setFrameShape(QFrame.StyledPanel)
+            products_frame.setStyleSheet(f"background-color: {get_color('card_bg')};")
+            products_layout = QVBoxLayout(products_frame)
 
-        for pid, name in products:
-            item = QLabel(f"<b>#{pid}</b> - {name}")
-            item.setStyleSheet(
-                f"padding: 5px; border-bottom: 1px solid {get_color('border')};")
-            scroll_layout.addWidget(item)
+            for pid, name in self.products:
+                product_label = QLabel(f"• {name} (ID: {pid})")
+                products_layout.addWidget(product_label)
 
-        scroll_area.setWidget(scroll_content)
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setMaximumHeight(200)
-        layout.addWidget(scroll_area)
+            main_layout.addWidget(products_frame)
+        else:
+            # Just show count for many products
+            count_label = QLabel(
+                self.translator.t('items_selected').format(count=len(self.products)))
+            count_label.setAlignment(Qt.AlignCenter)
+            count_label.setStyleSheet("font-weight: bold; font-size: 14px;")
+            main_layout.addWidget(count_label)
 
-        # Buttons
-        btn_box = QHBoxLayout()
-        cancel_btn = QPushButton(translator.t('no_btn'))
-        cancel_btn.setIcon(QIcon("resources/cancel_icon.png"))
-        delete_btn = QPushButton(translator.t('yes_btn').format(count=len(products)))
-        delete_btn.setIcon(QIcon("resources/delete_icon.png"))
+        # Button layout
+        button_layout = QHBoxLayout()
+        button_layout.setSpacing(10)
 
-        # Button styling
-        btn_style = f"""
+        # Cancel button
+        self.cancel_btn = QPushButton(self.translator.t('cancel'))
+        self.cancel_btn.setIcon(QIcon("resources/cancel_icon.png"))
+        self.cancel_btn.clicked.connect(self.reject)
+        self.cancel_btn.setCursor(Qt.PointingHandCursor)
+        button_layout.addWidget(self.cancel_btn)
+
+        # Delete button (danger styled)
+        self.delete_btn = QPushButton(
+            self.translator.t('yes_btn').format(count=len(self.products)))
+        self.delete_btn.setIcon(QIcon("resources/delete_icon.png"))
+        self.delete_btn.clicked.connect(self.accept)
+        self.delete_btn.setCursor(Qt.PointingHandCursor)
+
+        # Style delete button as danger button
+        danger_color = "#f44336"  # Red color for danger
+        danger_hover = "#e53935"
+        danger_pressed = "#d32f2f"
+        text_color = "#ffffff"  # White text
+
+        danger_style = f"""
             QPushButton {{
-                padding: 10px 20px;
-                border-radius: 5px;
+                background-color: {danger_color};
+                color: {text_color};
+                border: none;
+                padding: 8px 16px;
                 font-weight: bold;
-                min-width: 100px;
-            }}
-        """
-        cancel_style = f"""
-            {btn_style}
-            QPushButton {{
-                background-color: {get_color('secondary')};
-                color: {get_color('text')};
-                border: 1px solid {get_color('border')};
+                border-radius: 5px;
             }}
             QPushButton:hover {{
-                background-color: {get_color('button_hover')};
+                background-color: {danger_hover};
+            }}
+            QPushButton:pressed {{
+                background-color: {danger_pressed};
             }}
         """
-        delete_style = f"""
-            {btn_style}
-            QPushButton {{
-                background-color: {get_color('error')};
-                color: white;
-                border: 1px solid {get_color('error')};
-            }}
-            QPushButton:hover {{
-                background-color: {QColor(get_color('error')).darker(120).name()};
-            }}
-        """
+        self.delete_btn.setStyleSheet(danger_style)
 
-        cancel_btn.setStyleSheet(cancel_style)
-        delete_btn.setStyleSheet(delete_style)
+        button_layout.addWidget(self.delete_btn)
 
-        btn_box.addStretch()
-        btn_box.addWidget(cancel_btn)
-        btn_box.addWidget(delete_btn)
-        layout.addLayout(btn_box)
-
-        # Connections
-        cancel_btn.clicked.connect(self.reject)
-        delete_btn.clicked.connect(self.accept)
-
-        self.setLayout(layout)
+        main_layout.addLayout(button_layout)

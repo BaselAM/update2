@@ -56,16 +56,45 @@ class StatusBar(QFrame):
         # Status text with modern, premium styling
         self.status_text = QLabel()
         self.status_text.setWordWrap(True)
+        self.status_text.setMinimumWidth(200)  # Set minimum width
+        self.status_text.setAlignment(
+            Qt.AlignLeading | Qt.AlignVCenter)  # Align to start for RTL support
         font = QFont("Segoe UI", 13)
         font.setWeight(QFont.Medium)
         self.status_text.setFont(font)
 
-        layout.addWidget(self.status_icon)
-        layout.addWidget(self.status_text, 1)
+        # For RTL languages like Hebrew, adjust the layout direction
+        if self.layoutDirection() == Qt.RightToLeft:
+            layout.addWidget(self.status_text, 1)
+            layout.addWidget(self.status_icon)
+        else:
+            layout.addWidget(self.status_icon)
+            layout.addWidget(self.status_text, 1)
 
         # Initialize with no text or icon
         self.status_text.setText("")
         self.status_icon.setPixmap(QPixmap())
+
+    def setLayoutDirection(self, direction):
+        """Override to handle layout changes when RTL/LTR direction changes"""
+        super().setLayoutDirection(direction)
+
+        # Re-arrange widgets based on layout direction
+        layout = self.layout()
+        if layout:
+            # Clear the layout
+            while layout.count():
+                item = layout.takeAt(0)
+                if item.widget():
+                    layout.removeWidget(item.widget())
+
+            # Re-add widgets in the correct order
+            if direction == Qt.RightToLeft:
+                layout.addWidget(self.status_text, 1)
+                layout.addWidget(self.status_icon)
+            else:
+                layout.addWidget(self.status_icon)
+                layout.addWidget(self.status_text, 1)
 
     def set_theme(self, theme):
         """
@@ -150,7 +179,22 @@ class StatusBar(QFrame):
         except Exception:
             self.status_icon.setText("")
 
-        self.status_text.setText(message)
+        # If the message contains untranslated placeholders, don't crash
+        safe_message = message
+        try:
+            # Check if it's a formatting string with {placeholders}
+            if "{" in message and "}" in message:
+                # Test format with dummy values to see if it's valid
+                try:
+                    test = message.format(count=0, file="test.csv")
+                except KeyError:
+                    # Has placeholders but wrong ones, display as-is
+                    pass
+        except Exception:
+            # If any error occurs, use message as-is
+            pass
+
+        self.status_text.setText(safe_message)
         self.setStyleSheet(self._get_premium_style(type))
 
         # Animate expansion to show the message
@@ -184,3 +228,43 @@ class StatusBar(QFrame):
     def clear(self):
         """Alias for collapse, to support external calls."""
         self.collapse()
+
+    def show_sequential_messages(self, first_message, second_message,
+                                 first_type="success",
+                                 second_type="info", first_duration=3000,
+                                 second_duration=5000):
+        """
+        Shows a sequence of two messages:
+        1. First message (typically a success message) for first_duration milliseconds
+        2. Then second message (typically loaded products info) for second_duration milliseconds
+        3. Then collapses the status bar
+
+        This creates a smooth flow of information for the user after operations.
+        """
+        print(f"StatusBar: Showing first message: '{first_message}' (type: {first_type})")
+
+        # Cancel any previous timers to prevent message conflicts
+        if self.auto_hide_timer.isActive():
+            self.auto_hide_timer.stop()
+
+        # Make sure any pending message updates are cancelled
+        for timer in self.findChildren(QTimer):
+            if timer != self.auto_hide_timer:
+                timer.stop()
+
+        # Show the first message immediately
+        self.show_message(first_message, first_type,
+                          first_duration + 500)  # Add buffer to prevent early switching
+
+        # Create a dedicated timer for the second message to avoid conflicts
+        second_msg_timer = QTimer(self)
+        second_msg_timer.setSingleShot(True)
+        second_msg_timer.timeout.connect(
+            lambda: self._show_second_message(second_message, second_type,
+                                              second_duration))
+        second_msg_timer.start(first_duration)
+
+    def _show_second_message(self, message, type, duration):
+        """Helper method to show the second message in the sequence."""
+        print(f"StatusBar: Showing second message: '{message}' (type: {type})")
+        self.show_message(message, type, duration)

@@ -261,3 +261,41 @@ class ProductsTable(QFrame):
         """Handle resize events to adjust column widths"""
         super().resizeEvent(event)
         self.adjust_column_widths()
+
+    # def highlight_row_by_id(self, product_id):
+    #     """Highlight a row containing the product with the given ID."""
+    #     try:
+    #         for row in range(self.table.rowCount()):
+    #             id_item = self.table.item(row, 0)
+    #             if id_item and id_item.text() == str(product_id):
+    #                 # Highlight the row
+    #                 for col in range(self.table.columnCount()):
+    #                     cell_item = self.table.item(row, col)
+    #                     if cell_item:
+    #                         cell_item.setBackground(
+    #                             QColor(230, 255, 230))  # Light green background
+    #
+    #                 # Scroll to the row
+    #                 self.table.scrollToItem(id_item)
+    #
+    #                 # Schedule removing the highlight after 3 seconds
+    #                 QTimer.singleShot(3000, lambda r=row: self._remove_highlight(r))
+    #                 return True
+    #         return False
+    #     except Exception as e:
+    #         print(f"Error highlighting row: {e}")
+    #         return False
+    #
+    # def _remove_highlight(self, row):
+    #     """Remove highlighting from a row."""
+    #     try:
+    #         if row < 0 or row >= self.table.rowCount():
+    #             return
+    #
+    #         for col in range(self.table.columnCount()):
+    #             cell_item = self.table.item(row, col)
+    #             if cell_item:
+    #                 cell_item.setBackground(
+    #                     QColor(255, 255, 255))  # Reset to white/default
+    #     except Exception as e:
+    #         print(f"Error removing highlight: {e}")

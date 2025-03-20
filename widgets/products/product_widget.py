@@ -478,56 +478,16 @@ class ProductsWidget(QWidget):
                     item.setText(f"{float(new_value):.2f}")
                     table.blockSignals(False)
 
+                # Simply show success message, no need to reload products
+                success_message = self.translator.t('product_updated')
+                self.status_bar.show_message(success_message, "success", 3000)
+
         except Exception as e:
             print(f"Error handling cell change: {e}")
             import traceback
             print(traceback.format_exc())
 
-    def export_data(self):
-        try:
-            table = self.product_table.table
-            rows = table.rowCount()
-            cols = table.columnCount()
-
-            if rows == 0:
-                self.status_bar.show_message(self.translator.t('no_data_to_export'), "warning")
-                return
-
-            file_name, _ = QFileDialog.getSaveFileName(
-                self,
-                self.translator.t('export_title'),
-                "",
-                "CSV Files (*.csv);;All Files (*)"
-            )
-
-            if not file_name:
-                return
-
-            headers = []
-            for col in range(cols):
-                headers.append(table.horizontalHeaderItem(col).text())
-
-            data = []
-            for row in range(rows):
-                row_data = []
-                for col in range(cols):
-                    item = table.item(row, col)
-                    row_data.append(item.text() if item else "")
-                data.append(row_data)
-
-            success = export_to_csv(file_name, headers, data)
-
-            if success:
-                self.status_bar.show_message(
-                    self.translator.t('export_success').format(file=file_name),
-                    "success"
-                )
-            else:
-                self.status_bar.show_message(self.translator.t('export_error'), "error")
-
-        except Exception as e:
-            print(f"Export error: {e}")
-            self.status_bar.show_message(self.translator.t('export_error'), "error")
+    # Also update process_add_product to use sequential messaging:
 
     def load_products(self):
         print("Loading products from database")
@@ -597,10 +557,12 @@ class ProductsWidget(QWidget):
                 print(f"Data processing error: {e}")
                 self.status_bar.show_message(self.translator.t('data_error'), "error")
 
+
+    @pyqtSlot(dict)
     @pyqtSlot(dict)
     def process_add_product(self, data):
         try:
-            print(f"Processing add product request: {data}")
+            print(f"[{self.__class__.__name__}] Processing add product request: {data}")
             sanitized_data = self.validator.sanitize_product_data(data)
             is_valid, error_msg = self.validator.validate_product(sanitized_data)
 
@@ -617,81 +579,156 @@ class ProductsWidget(QWidget):
                     QMessageBox.Yes | QMessageBox.No
                 )
                 if confirm == QMessageBox.Yes:
-                    print(f"Updating existing product with ID: {existing[0]}")
+                    print(
+                        f"[{self.__class__.__name__}] Updating existing product with ID: {existing[0]}")
                     success = self.db.update_part(existing[0], **sanitized_data)
                     if not success:
                         raise Exception("Failed to update existing product")
-                    print("Update successful, reloading products")
-                    self.load_products()
-                    self.status_bar.show_message(self.translator.t('product_updated'), "success")
+
+                    # Show success message immediately
+                    success_message = self.translator.t('product_updated')
+                    self.status_bar.show_message(success_message, "success")
+
+                    # Delay loading products to ensure message is visible
+                    QTimer.singleShot(1500,
+                                      lambda: self._complete_add_product(existing[0]))
                 else:
                     return
             else:
-                print(f"Adding new product: {sanitized_data['product_name']}")
+                print(
+                    f"[{self.__class__.__name__}] Adding new product: {sanitized_data['product_name']}")
                 success = self.db.add_part(**sanitized_data)
                 if not success:
                     raise Exception("Failed to add new product")
-                print("Add successful, verifying in database...")
+
+                print(
+                    "[{self.__class__.__name__}] Add successful, verifying in database...")
                 verify_product = self.db.get_part_by_name(sanitized_data['product_name'])
                 if not verify_product:
-                    print("ERROR: Product appears in UI but couldn't be verified in database!")
+                    print(
+                        "[{self.__class__.__name__}] ERROR: Product appears in UI but couldn't be verified in database!")
                     raise Exception("Product verification failed - database update issue")
-                print(f"Product verified in database with ID: {verify_product[0]}")
-                self.load_products()
-                self.status_bar.show_message(self.translator.t('product_added'), "success")
+
+                print(
+                    f"[{self.__class__.__name__}] Product verified in database with ID: {verify_product[0]}")
+
+                # Show success message immediately
+                success_message = self.translator.t('product_added')
+                self.status_bar.show_message(success_message, "success")
+
+                # Delay loading products to ensure message is visible
+                QTimer.singleShot(1500,
+                                  lambda: self._complete_add_product(verify_product[0]))
 
         except Exception as e:
-            print(f"Add product error: {e}")
+            print(f"[{self.__class__.__name__}] Add product error: {e}")
             import traceback
-            print(f"Traceback: {traceback.format_exc()}")
+            print(f"[{self.__class__.__name__}] Traceback: {traceback.format_exc()}")
             self.status_bar.show_message(self.translator.t('add_error'), "error")
             QTimer.singleShot(500, self.load_products)
+
+    def _complete_add_product(self, product_id):
+        """Complete the product addition process after showing success message."""
+        try:
+            # Now load products
+            print(
+                f"[{self.__class__.__name__}] Completing product add/update for ID: {product_id}")
+            self.load_products()
+
+            # After products are loaded, show count message
+            QTimer.singleShot(100, lambda: self._show_products_loaded_message(product_id))
+        except Exception as e:
+            print(f"[{self.__class__.__name__}] Error completing product add: {e}")
+
+    def _show_products_loaded_message(self, product_id=None):
+        """Show products loaded message and highlight row if product_id is provided."""
+        try:
+            loaded_message = self.translator.t('products_loaded').format(
+                count=len(self.all_products))
+            self.status_bar.show_message(loaded_message, "info", 5000)
+
+            # If we have a product ID, try to highlight that row
+            if product_id is not None and hasattr(self.product_table,
+                                                  'highlight_row_by_id'):
+                self.product_table.highlight_row_by_id(product_id)
+            elif product_id is not None:
+                # Fallback if highlight method doesn't exist
+                self.product_table.highlight_product(str(product_id))
+        except Exception as e:
+            print(
+                f"[{self.__class__.__name__}] Error showing products loaded message: {e}")
 
     def universal_remove(self):
         try:
             if self.select_toggle.isChecked():
                 product_details = self.product_table.get_selected_rows_data()
                 if not product_details:
-                    self.status_bar.show_message(self.translator.t('no_rows_selected'), "warning")
+                    self.status_bar.show_message(self.translator.t('no_rows_selected'),
+                                                 "warning")
                     return
 
+                # Create the dialog
                 dialog = DeleteConfirmationDialog(
                     products=product_details,
                     translator=self.translator,
                     parent=self
                 )
 
+                # Now we can safely use dialog
                 if dialog.exec_() == QDialog.Accepted:
                     deleted_ids = self._batch_delete_products(product_details)
                     if deleted_ids:
                         print("Loading fresh data after deletion")
-                        self.load_products()
-                        self.status_bar.show_message(
-                            self.translator.t('items_deleted').format(count=len(deleted_ids)),
-                            "success"
-                        )
-                    else:
-                        self.status_bar.show_message(self.translator.t('delete_failed'), "error")
 
-                self.select_toggle.setChecked(False)
-                self.on_select_toggled(False)
-                dialog.deleteLater()
+                        # Show success message before loading products
+                        success_message = self.translator.t('items_deleted').format(
+                            count=len(deleted_ids))
+                        self.status_bar.show_message(success_message, "success")
+
+                        # Wait before loading products
+                        QTimer.singleShot(1500, self._complete_remove_operation)
+                    else:
+                        self.status_bar.show_message(self.translator.t('delete_failed'),
+                                                     "error")
 
             else:
                 self.status_bar.show_message(
-                    "Select mode must be enabled for deletion",
+                    self.translator.t(
+                        'select_mode_required') or "Select mode must be enabled for deletion",
                     "warning"
                 )
                 return
 
         except Exception as e:
             import traceback
+
+            # Handle missing translation gracefully
+            error_message = str(e)
+            try:
+                error_prefix = self.translator.t('unexpected_error')
+            except:
+                error_prefix = "Unexpected error"
+
             self.status_bar.show_message(
-                f"{self.translator.t('unexpected_error')}: {str(e)}",
+                f"{error_prefix}: {error_message}",
                 "error"
             )
             print(f"Universal remove error: {traceback.format_exc()}")
             self.load_products()
+
+    def _complete_remove_operation(self):
+        """Complete the product removal process after showing success message."""
+        try:
+            # Load products
+            self.load_products()
+
+            # Show count message after products are loaded
+            loaded_message = self.translator.t('products_loaded').format(
+                count=len(self.all_products))
+            self.status_bar.show_message(loaded_message, "info", 5000)
+        except Exception as e:
+            print(f"Error completing product removal: {e}")
+    # For cell editing, add a success message in the on_cell_changed method:
 
     def _batch_delete_products(self, product_list):
         if not product_list:
@@ -871,3 +908,236 @@ class ProductsWidget(QWidget):
         except Exception as e:
             print(f"Cleanup error: {e}")
         event.accept()
+
+    # Add this method to the ProductsWidget class:
+
+    def export_data(self):
+        try:
+            table = self.product_table.table
+            rows = table.rowCount()
+            cols = table.columnCount()
+
+            if rows == 0:
+                self.status_bar.show_message(self.translator.t('no_data_to_export'),
+                                             "warning")
+                return
+
+            file_name, _ = QFileDialog.getSaveFileName(
+                self,
+                self.translator.t('export_title'),
+                "",
+                "CSV Files (*.csv);;All Files (*)"
+            )
+
+            if not file_name:
+                return
+
+            headers = []
+            for col in range(cols):
+                headers.append(table.horizontalHeaderItem(col).text())
+
+            data = []
+            for row in range(rows):
+                row_data = []
+                for col in range(cols):
+                    item = table.item(row, col)
+                    row_data.append(item.text() if item else "")
+                data.append(row_data)
+
+            success = export_to_csv(file_name, headers, data)
+
+            if success:
+                # Show sequential messages for export success, then product count
+                success_message = self.translator.t('export_success').format(
+                    file=file_name)
+                loaded_message = self.translator.t('products_loaded').format(
+                    count=len(self.all_products))
+                self.status_bar.show_sequential_messages(
+                    success_message,
+                    loaded_message,
+                    "success",
+                    "info",
+                    3000,  # Show success for 3 seconds
+                    5000  # Show loaded message for 5 seconds
+                )
+            else:
+                self.status_bar.show_message(self.translator.t('export_error'), "error")
+
+        except Exception as e:
+            print(f"Export error: {e}")
+            self.status_bar.show_message(self.translator.t('export_error'), "error")
+
+    def highlight_row_by_id(self, product_id):
+        """Highlight a row containing the product with the given ID."""
+        for row in range(self.table.rowCount()):
+            id_item = self.table.item(row, 0)
+            if id_item and id_item.text() == str(product_id):
+                # Highlight the row
+                for col in range(self.table.columnCount()):
+                    cell_item = self.table.item(row, col)
+                    if cell_item:
+                        cell_item.setBackground(
+                            QColor(230, 255, 230))  # Light green background
+
+                # Scroll to the row
+                self.table.scrollToItem(id_item)
+
+                # Schedule removing the highlight after 3 seconds
+                QTimer.singleShot(3000, lambda r=row: self._remove_highlight(r))
+                return True
+        return False
+
+    def _remove_highlight(self, row):
+        """Remove highlighting from a row."""
+        if row < 0 or row >= self.table.rowCount():
+            return
+
+        for col in range(self.table.columnCount()):
+            cell_item = self.table.item(row, col)
+            if cell_item:
+                cell_item.setBackground(QColor(255, 255, 255))  # Reset to white/default
+
+    # Replace your existing filter_products method or similar with this:
+
+    def open_filter_dialog(self):
+        """Open the filter dialog and apply the selected filters."""
+        try:
+            # Get currency symbol from settings or use default
+            currency_symbol = "₪"  # Default to ILS
+            try:
+                # Try to get currency from settings if available
+                settings = self.db.get_settings()
+                if settings and "default_currency" in settings:
+                    currency_code = settings["default_currency"].lower()
+                    currency_map = {"usd": "$", "eur": "€", "gbp": "£", "ils": "₪"}
+                    currency_symbol = currency_map.get(currency_code, "₪")
+            except Exception as e:
+                print(f"Could not get currency setting: {e}")
+
+            # Create dialog with currency symbol passed directly
+            filter_dialog = FilterDialog(self.translator, parent=self,
+                                         currency_symbol=currency_symbol)
+
+            # If user accepts the dialog, apply the filters
+            if filter_dialog.exec_() == QDialog.Accepted:
+                self.apply_filters(filter_dialog.get_filters())
+
+        except Exception as e:
+            self.status_bar.show_message(self.translator.t('filter_error'), "error")
+            print(f"Error in filter dialog: {e}")
+
+    def apply_filters(self, filters):
+        """Apply the filters from the filter dialog to the product table with improved stock filtering."""
+        try:
+            # Store original products for reference
+            original_products = self.all_products.copy() if hasattr(self,
+                                                                    'all_products') else []
+
+            # Add debug print to see what filters are being applied
+            print(f"Applying filters: {filters}")
+            print(f"Total products before filtering: {len(original_products)}")
+
+            filtered_products = []
+            count = 0
+
+            for product in original_products:
+                # Check all filter criteria
+                match = True
+
+                # Debug print for a sample product
+                if count == 0:
+                    print(f"Sample product: {product}")
+
+                # Category filter
+                if filters["category"] and filters["category"].lower() not in str(
+                        product.get("category", "")).lower():
+                    match = False
+
+                # Name filter
+                if filters["name"] and filters["name"].lower() not in str(
+                        product.get("product_name", "")).lower():
+                    match = False
+
+                # Car filter
+                if filters["car_name"] and filters["car_name"].lower() not in str(
+                        product.get("car_name", "")).lower():
+                    match = False
+
+                # Model filter
+                if filters["model"] and filters["model"].lower() not in str(
+                        product.get("model", "")).lower():
+                    match = False
+
+                # Price filters
+                if filters["min_price"] is not None:
+                    try:
+                        product_price = float(product.get("price", 0))
+                        if product_price < filters["min_price"]:
+                            match = False
+                    except (ValueError, TypeError):
+                        pass  # Skip invalid price values
+
+                if filters["max_price"] is not None:
+                    try:
+                        product_price = float(product.get("price", 0))
+                        if product_price > filters["max_price"]:
+                            match = False
+                    except (ValueError, TypeError):
+                        pass  # Skip invalid price values
+
+                # Stock status filter - simplified
+                if filters.get("stock_status") == "in_stock":
+                    # Try several field names that might contain quantity
+                    quantity = 0
+                    try:
+                        for field in ["quantity", "qty", "stock", "inventory"]:
+                            if field in product:
+                                quantity = int(product[field])
+                                break
+                    except (ValueError, TypeError):
+                        quantity = 0
+
+                    if quantity <= 0:
+                        match = False
+
+                elif filters.get("stock_status") == "out_of_stock":
+                    # Try several field names that might contain quantity
+                    quantity = 1  # Default to in-stock
+                    try:
+                        for field in ["quantity", "qty", "stock", "inventory"]:
+                            if field in product:
+                                quantity = int(product[field])
+                                break
+                    except (ValueError, TypeError):
+                        quantity = 1
+
+                    if quantity > 0:
+                        match = False
+
+                if match:
+                    filtered_products.append(product)
+                    count += 1
+
+            # Display filtered products
+            if hasattr(self, 'product_table') and hasattr(self.product_table,
+                                                          'display_products'):
+                self.product_table.display_products(filtered_products)
+
+            # Update status message
+            status_msg = self.translator.t('filter_status').format(count=count, total=len(
+                original_products))
+
+            if hasattr(self, 'status_bar') and hasattr(self.status_bar, 'show_message'):
+                self.status_bar.show_message(status_msg, "info")
+
+            # Debug print final results
+            print(f"Matched products after filtering: {count}")
+
+        except Exception as e:
+            print(f"Error applying filters: {e}")
+            import traceback
+            traceback.print_exc()
+
+            if hasattr(self, 'status_bar') and hasattr(self.status_bar, 'show_message'):
+                self.status_bar.show_message(self.translator.t('filter_error'), "error")
+

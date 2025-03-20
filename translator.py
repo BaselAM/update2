@@ -1,7 +1,112 @@
 # translator.py
 
 TRANSLATIONS = {
+
+    'car_details': {
+        'en': 'Car Details',
+        'he': 'פרטי רכב'
+    },
+    'stock_status': {
+        'en': 'Stock Status',
+        'he': 'מצב מלאי'
+    },
+    'all_products': {
+        'en': 'All Products',
+        'he': 'כל המוצרים'
+    },
+    'in_stock_only': {
+        'en': 'In Stock Only',
+        'he': 'במלאי בלבד'
+    },
+    'out_of_stock_only': {
+        'en': 'Out of Stock Only',
+        'he': 'אזל מהמלאי בלבד'
+    },
 # In translations.py, add this to your TRANSLATIONS dictionary:
+    'filter_title': {
+        'en': 'Filter Products',
+        'he': 'סינון מוצרים'
+    },
+    'filter_criteria': {
+        'en': 'Filter Criteria',
+        'he': 'קריטריוני סינון'
+    },
+    'min': {
+        'en': 'Min',
+        'he': 'מינימום'
+    },
+    'max': {
+        'en': 'Max',
+        'he': 'מקסימום'
+    },
+    'no_min_price': {
+        'en': 'No minimum',
+        'he': 'ללא מינימום'
+    },
+    'no_max_price': {
+        'en': 'No maximum',
+        'he': 'ללא מקסימום'
+    },
+    'confirm_delete': {
+        'en': 'Confirm Deletion',
+        'he': 'אישור מחיקה'
+    },
+    'delete_confirmation': {
+        'en': 'Are you sure you want to delete {count} item(s)?',
+        'he': 'האם אתה בטוח שברצונך למחוק {count} פריט(ים)?'
+    },
+    'items_selected': {
+        'en': '{count} items selected for deletion',
+        'he': '{count} פריטים נבחרו למחיקה'
+    },
+    'product_updated': {
+        'en': 'Product updated successfully',
+        'he': 'המוצר עודכן בהצלחה'
+    },
+    'items_deleted': {
+        'en': 'Successfully deleted {count} items',
+        'he': 'נמחקו בהצלחה {count} פריטים'
+    },
+    'delete_failed': {
+        'en': 'Failed to delete products',
+        'he': 'כשלון במחיקת המוצרים'
+    },
+    'export_error': {
+        'en': 'Error exporting data',
+        'he': 'שגיאה בייצוא המידע'
+    },
+    'unexpected_error': {
+        'en': 'Unexpected error',
+        'he': 'שגיאה לא צפויה'
+    },
+    'select_mode_required': {
+        'en': 'Select mode must be enabled for deletion',
+        'he': 'יש להפעיל מצב בחירה למחיקה'
+    },
+    'no_rows_selected': {
+        'en': 'No rows selected for deletion',
+        'he': 'לא נבחרו שורות למחיקה'
+    },
+    'operation_canceled': {
+        'en': 'Operation canceled',
+        'he': 'הפעולה בוטלה'
+    },
+    'selection_mode_error': {
+        'en': 'Error in selection mode',
+        'he': 'שגיאה במצב בחירה'
+    },
+    'select_mode_enabled': {
+        'en': 'Selection mode enabled',
+        'he': 'מצב בחירה הופעל'
+    },
+    'deleting_items': {
+        'en': 'Deleting {count} items...',
+        'he': 'מוחק {count} פריטים...'
+    },
+    'add_error': {
+        'en': 'Error adding product',
+        'he': 'שגיאה בהוספת מוצר'
+    },
 'parts_navigation_title': {
     'en': "Parts Selection Wizard",
     'he': "אשף בחירת חלקים"
