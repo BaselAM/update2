@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import (QTableView, QAbstractItemView, QHeaderView,
-                             QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout)
-from PyQt5.QtCore import Qt, QAbstractTableModel, QModelIndex, pyqtSignal
+                            QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout,
+                            QWidget, QAbstractButton)
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QColor
 from themes import get_color
-from .components import ThemedNumericDelegate
+from .components.table_delegates import ThemedNumericDelegate, ThemedItemDelegate
 
 
 class ProductsTable(QFrame):
@@ -16,9 +17,10 @@ class ProductsTable(QFrame):
         self.translator = translator
         self.setObjectName("tableContainer")
 
-        # Setup layout
+        # Setup layout with no margins for better scrollbar alignment
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 15)  # Add bottom margin for scrollbar
+        layout.setContentsMargins(0, 0, 0, 0)  # Remove all margins
+        layout.setSpacing(0)  # Remove spacing
 
         # Create table widget
         self.table = QTableWidget()
@@ -32,22 +34,53 @@ class ProductsTable(QFrame):
         # Custom column widths instead of stretch
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
 
+        # Configure selection and interaction behavior
         self.table.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.table.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table.cellChanged.connect(self._on_cell_changed)
         self.table.setAlternatingRowColors(True)
 
-        # Use delegates for better numeric editing
-        self.quantity_delegate = ThemedNumericDelegate(self.table)
-        self.price_delegate = ThemedNumericDelegate(self.table)
-        self.table.setItemDelegateForColumn(5, self.quantity_delegate)  # Quantity
-        self.table.setItemDelegateForColumn(6, self.price_delegate)  # Price
+        # Set edit triggers - make it easier to enter edit mode
+        self.table.setEditTriggers(
+            QAbstractItemView.DoubleClicked |
+            QAbstractItemView.EditKeyPressed
+        )
 
+        # Modern scrollbar configuration
+        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.table.setVerticalScrollMode(
+            QAbstractItemView.ScrollPerPixel)  # Smooth scrolling
+        self.table.setHorizontalScrollMode(
+            QAbstractItemView.ScrollPerPixel)  # Smooth scrolling
+
+        # Remove grid for a sleeker look
+        self.table.setShowGrid(False)
+
+        # Disable the corner button
+        self.table.setCornerButtonEnabled(False)
+
+        # Explicitly style the corner widget if it exists
+        corner_widget = self.table.findChild(QWidget)
+        if corner_widget:
+            corner_widget.setStyleSheet(
+                f"background-color: {get_color('background')}; border: none;")
+
+        # Apply themed delegates for elegant editing experience
+        self.item_delegate = ThemedItemDelegate()
+        self.numeric_delegate = ThemedNumericDelegate()
+
+        # Apply delegates to different column types
+        for col in range(1, 5):  # Text columns
+            self.table.setItemDelegateForColumn(col, self.item_delegate)
+        self.table.setItemDelegateForColumn(5, self.numeric_delegate)  # Quantity
+        self.table.setItemDelegateForColumn(6, self.numeric_delegate)  # Price
+
+        # Add table to layout
         layout.addWidget(self.table)
 
         # Apply initial styling
         self.apply_theme()
-
     def update_headers(self):
         """Update table headers with current translations"""
         headers = [
@@ -188,25 +221,28 @@ class ProductsTable(QFrame):
                 return True
         return False
 
+    # Only update the apply_theme method to improve cell appearance
     def apply_theme(self):
-        """Apply current theme to table"""
+        """Apply current theme to table with enhanced styling"""
         bg_color = get_color('background')
         text_color = get_color('text')
         border_color = get_color('border')
+        highlight_color = get_color('highlight')
+        secondary_color = get_color('secondary')
 
-        # Table styling with larger elements and enhanced borders
+        # Table styling with refined cell appearance
         table_style = f"""
             QTableWidget {{
                 background-color: {bg_color};
-                alternate-background-color: {get_color('secondary')};
+                alternate-background-color: {secondary_color};
                 gridline-color: {border_color};
                 border: 2px solid {border_color};
                 border-radius: 6px;
                 font-size: 14px;
             }}
             QTableWidget::item {{
-                padding: 8px;
-                transition: background 0.3s ease, color 0.3s ease;
+                padding: 0px;
+                border: none;
             }}
             QHeaderView::section {{
                 background-color: {get_color('header')};
@@ -218,84 +254,98 @@ class ProductsTable(QFrame):
                 font-size: 15px;
             }}
             QTableWidget::item:selected {{
-                background-color: {get_color('highlight')};
+                background-color: {highlight_color};
                 color: {bg_color};
+            }}
+            /* Completely removes focus indicators */
+            QTableView:focus {{
+                outline: none;
+            }}
+            QTableView::item:focus {{
+                outline: none;
+                border: none;
+            }}
+            /* Smoother hover effect */
+            QTableWidget::item:hover:!selected {{
+                background-color: {highlight_color}25;
+            }}
+
+            /* Modern scrollbar styling integrated directly in the table style */
+            QScrollBar:vertical {{
+                background: transparent;
+                width: 8px;
+                margin: 0px;
+                border-radius: 4px;
+            }}
+            QScrollBar::handle:vertical {{
+                background: {get_color('button')};
+                min-height: 30px;
+                border-radius: 4px;
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background: {highlight_color};
+            }}
+            QScrollBar::add-line:vertical, 
+            QScrollBar::sub-line:vertical,
+            QScrollBar::add-page:vertical, 
+            QScrollBar::sub-page:vertical {{
+                background: transparent;
+                height: 0px;
+                width: 0px;
+            }}
+
+            QScrollBar:horizontal {{
+                background: transparent;
+                height: 8px;
+                margin: 0px;
+                border-radius: 4px;
+            }}
+            QScrollBar::handle:horizontal {{
+                background: {get_color('button')};
+                min-width: 30px;
+                border-radius: 4px;
+            }}
+            QScrollBar::handle:horizontal:hover {{
+                background: {highlight_color};
+            }}
+            QScrollBar::add-line:horizontal, 
+            QScrollBar::sub-line:horizontal,
+            QScrollBar::add-page:horizontal, 
+            QScrollBar::sub-page:horizontal {{
+                background: transparent;
+                height: 0px;
+                width: 0px;
+            }}
+
+            /* Multiple ways to target the corner widget */
+            QAbstractScrollArea::corner {{
+                background: {bg_color};
+                border: none;
+            }}
+            QTableCornerButton::section {{
+                background: {bg_color};
+                border: none;
+            }}
+            QScrollBar::corner {{
+                background: {bg_color};
+                border: none;
+            }}
+            /* Ensure all corners and borders are properly styled */
+            QWidget {{
+                border-bottom-right-radius: 6px;
             }}
         """
         self.table.setStyleSheet(table_style)
 
-        # Scrollbar styling
-        scroll_style = f"""
-            QScrollBar:vertical {{
-                background: {bg_color};
-                width: 14px;
-                margin: 0;
-            }}
-            QScrollBar::handle:vertical {{
-                background: {get_color('button')};
-                min-height: 20px;
-                border-radius: 7px;
-            }}
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
-                background: none;
-            }}
+        # As a fallback, directly set the background of the table viewport
+        self.table.viewport().setStyleSheet(f"background: {bg_color};")
 
-            QScrollBar:horizontal {{
-                background: {bg_color};
-                height: 14px;
-                margin: 0;
-            }}
-            QScrollBar::handle:horizontal {{
-                background: {get_color('button')};
-                min-width: 20px;
-                border-radius: 7px;
-            }}
-            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
-                background: none;
-            }}
-        """
-        self.table.verticalScrollBar().setStyleSheet(scroll_style)
-        self.table.horizontalScrollBar().setStyleSheet(scroll_style)
+        # Also add direct event-based styling after theme application
+        corner = self.table.findChild(QAbstractButton)
+        if corner:
+            corner.setStyleSheet(f"background-color: {bg_color}; border: none;")
 
     def resizeEvent(self, event):
         """Handle resize events to adjust column widths"""
         super().resizeEvent(event)
         self.adjust_column_widths()
-
-    # def highlight_row_by_id(self, product_id):
-    #     """Highlight a row containing the product with the given ID."""
-    #     try:
-    #         for row in range(self.table.rowCount()):
-    #             id_item = self.table.item(row, 0)
-    #             if id_item and id_item.text() == str(product_id):
-    #                 # Highlight the row
-    #                 for col in range(self.table.columnCount()):
-    #                     cell_item = self.table.item(row, col)
-    #                     if cell_item:
-    #                         cell_item.setBackground(
-    #                             QColor(230, 255, 230))  # Light green background
-    #
-    #                 # Scroll to the row
-    #                 self.table.scrollToItem(id_item)
-    #
-    #                 # Schedule removing the highlight after 3 seconds
-    #                 QTimer.singleShot(3000, lambda r=row: self._remove_highlight(r))
-    #                 return True
-    #         return False
-    #     except Exception as e:
-    #         print(f"Error highlighting row: {e}")
-    #         return False
-    #
-    # def _remove_highlight(self, row):
-    #     """Remove highlighting from a row."""
-    #     try:
-    #         if row < 0 or row >= self.table.rowCount():
-    #             return
-    #
-    #         for col in range(self.table.columnCount()):
-    #             cell_item = self.table.item(row, col)
-    #             if cell_item:
-    #                 cell_item.setBackground(
-    #                     QColor(255, 255, 255))  # Reset to white/default
-    #     except Exception as e:
-    #         print(f"Error removing highlight: {e}")

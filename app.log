@@ -10261,3 +10261,259 @@ AttributeError: 'ProductsTable' object has no attribute 'apply_theme'
 2025-03-21 03:01:34,696 - main - INFO - Cleaning up application resources...
 2025-03-21 03:01:34,696 - main - INFO - Closing database connection...
 2025-03-21 03:01:34,697 - main - INFO - Application shutdown complete
+2025-03-21 04:34:08,566 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:34:08,567 - main - INFO - Current user: BaselAM
+2025-03-21 04:34:08,673 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:34:08,673 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:34:08,674 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:34:08,676 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:34:08,677 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:34:08,677 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:34:08,677 - main - INFO - Initializing database connection...
+2025-03-21 04:34:08,694 - CarPartsDB - INFO - Thread 26808: Database connection established
+2025-03-21 04:34:08,694 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:34:08,694 - CarPartsDB - INFO - Thread 26808: Fetching all parts
+2025-03-21 04:34:08,720 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:34:10,971 - main - CRITICAL - Fatal error: 'ProductsTable' object has no attribute 'update_headers'
+Traceback (most recent call last):
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\main.py", line 107, in <module>
+    main_gui = GUI(car_parts_db=db_instance)
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\gui.py", line 48, in __init__
+    self.preload_views()
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\gui.py", line 66, in preload_views
+    self.products_widget = ProductsWidget(self.translator, self.parts_db)
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\widgets\products\product_widget.py", line 36, in __init__
+    self.setup_ui()
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\widgets\products\product_widget.py", line 119, in setup_ui
+    self.product_table = ProductsTable(self.translator)
+  File "C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\widgets\products\product_table.py", line 26, in __init__
+    self.update_headers()
+AttributeError: 'ProductsTable' object has no attribute 'update_headers'
+2025-03-21 04:35:36,006 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:35:36,007 - main - INFO - Current user: BaselAM
+2025-03-21 04:35:36,231 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:35:36,231 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:35:36,231 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:35:36,232 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:35:36,232 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:35:36,232 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:35:36,233 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:35:36,233 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:35:36,233 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:35:36,234 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:35:36,234 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:35:36,234 - main - INFO - Initializing database connection...
+2025-03-21 04:35:36,299 - CarPartsDB - INFO - Thread 22652: Database connection established
+2025-03-21 04:35:36,299 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:35:36,299 - CarPartsDB - INFO - Thread 22652: Fetching all parts
+2025-03-21 04:35:36,323 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:35:38,617 - CarPartsDB - INFO - Thread 25676: Database connection established
+2025-03-21 04:35:38,617 - CarPartsDB - INFO - Thread 25676: Fetching all parts
+2025-03-21 04:35:46,539 - main - INFO - User logged in: abumukh
+2025-03-21 04:36:24,208 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:36:24,208 - main - INFO - Current user: BaselAM
+2025-03-21 04:36:24,304 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:36:24,304 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:36:24,305 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:36:24,305 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:36:24,305 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:36:24,306 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:36:24,306 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:36:24,306 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:36:24,306 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:36:24,307 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:36:24,307 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:36:24,307 - main - INFO - Initializing database connection...
+2025-03-21 04:36:24,323 - CarPartsDB - INFO - Thread 21720: Database connection established
+2025-03-21 04:36:24,325 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:36:24,325 - CarPartsDB - INFO - Thread 21720: Fetching all parts
+2025-03-21 04:36:24,366 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:36:26,220 - CarPartsDB - INFO - Thread 9268: Database connection established
+2025-03-21 04:36:26,220 - CarPartsDB - INFO - Thread 9268: Fetching all parts
+2025-03-21 04:36:34,808 - main - INFO - User logged in: abumukh
+2025-03-21 04:40:28,488 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:40:28,489 - main - INFO - Current user: BaselAM
+2025-03-21 04:40:28,601 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:40:28,602 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:40:28,602 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:40:28,603 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:40:28,603 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:40:28,603 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:40:28,603 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:40:28,604 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:40:28,605 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:40:28,605 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:40:28,605 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:40:28,605 - main - INFO - Initializing database connection...
+2025-03-21 04:40:28,621 - CarPartsDB - INFO - Thread 12536: Database connection established
+2025-03-21 04:40:28,621 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:40:28,621 - CarPartsDB - INFO - Thread 12536: Fetching all parts
+2025-03-21 04:40:28,643 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:40:31,233 - CarPartsDB - INFO - Thread 27164: Database connection established
+2025-03-21 04:40:31,234 - CarPartsDB - INFO - Thread 27164: Fetching all parts
+2025-03-21 04:40:56,667 - main - INFO - User logged in: abumukh
+2025-03-21 04:42:32,262 - main - INFO - Cleaning up application resources...
+2025-03-21 04:42:32,262 - main - INFO - Closing database connection...
+2025-03-21 04:42:32,262 - main - INFO - Application shutdown complete
+2025-03-21 04:45:19,933 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:45:19,934 - main - INFO - Current user: BaselAM
+2025-03-21 04:45:20,126 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:45:20,127 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:45:20,127 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:45:20,127 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:45:20,127 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:45:20,127 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:45:20,128 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:45:20,128 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:45:20,128 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:45:20,128 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:45:20,128 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:45:20,129 - main - INFO - Initializing database connection...
+2025-03-21 04:45:20,162 - CarPartsDB - INFO - Thread 26228: Database connection established
+2025-03-21 04:45:20,163 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:45:20,163 - CarPartsDB - INFO - Thread 26228: Fetching all parts
+2025-03-21 04:45:20,196 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:45:23,886 - CarPartsDB - INFO - Thread 9376: Database connection established
+2025-03-21 04:45:23,887 - CarPartsDB - INFO - Thread 9376: Fetching all parts
+2025-03-21 04:45:29,927 - main - INFO - User logged in: abumukh
+2025-03-21 04:46:26,314 - main - INFO - Cleaning up application resources...
+2025-03-21 04:46:26,314 - main - INFO - Closing database connection...
+2025-03-21 04:46:26,315 - main - INFO - Application shutdown complete
+2025-03-21 04:49:57,278 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:49:57,278 - main - INFO - Current user: BaselAM
+2025-03-21 04:49:57,443 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:49:57,443 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:49:57,443 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:49:57,444 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:49:57,445 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:49:57,445 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:49:57,445 - main - INFO - Initializing database connection...
+2025-03-21 04:49:57,466 - CarPartsDB - INFO - Thread 23908: Database connection established
+2025-03-21 04:49:57,466 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:49:57,467 - CarPartsDB - INFO - Thread 23908: Fetching all parts
+2025-03-21 04:49:57,491 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:50:00,363 - CarPartsDB - INFO - Thread 27028: Database connection established
+2025-03-21 04:50:00,364 - CarPartsDB - INFO - Thread 27028: Fetching all parts
+2025-03-21 04:50:06,764 - main - INFO - User logged in: abumukh
+2025-03-21 04:51:55,044 - main - INFO - Cleaning up application resources...
+2025-03-21 04:51:55,044 - main - INFO - Closing database connection...
+2025-03-21 04:51:55,045 - main - INFO - Application shutdown complete
+2025-03-21 04:52:08,488 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:52:08,488 - main - INFO - Current user: BaselAM
+2025-03-21 04:52:08,523 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:52:08,524 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:52:08,524 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:52:08,525 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:52:08,525 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:52:08,525 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:52:08,525 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:52:08,526 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:52:08,526 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:52:08,526 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:52:08,526 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:52:08,527 - main - INFO - Initializing database connection...
+2025-03-21 04:52:08,528 - CarPartsDB - INFO - Thread 8892: Database connection established
+2025-03-21 04:52:08,529 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:52:08,529 - CarPartsDB - INFO - Thread 8892: Fetching all parts
+2025-03-21 04:52:08,552 - main - INFO - Connected to database. Found 2850 parts.
+2025-03-21 04:52:10,301 - CarPartsDB - INFO - Thread 12308: Database connection established
+2025-03-21 04:52:10,302 - CarPartsDB - INFO - Thread 12308: Fetching all parts
+2025-03-21 04:52:16,101 - main - INFO - User logged in: abumukh
+2025-03-21 04:52:24,318 - CarPartsDB - INFO - Thread 8892: Adding part: 'fahed'
+2025-03-21 04:52:24,320 - CarPartsDB - INFO - Created new part with ID: 5723
+2025-03-21 04:52:24,331 - CarPartsDB - INFO - Successfully verified part was added with ID: 5723
+2025-03-21 04:52:25,837 - CarPartsDB - INFO - Thread 4380: Database connection established
+2025-03-21 04:52:25,837 - CarPartsDB - INFO - Thread 4380: Fetching all parts
+2025-03-21 04:52:44,683 - CarPartsDB - INFO - Thread 8892: Adding part: 'basel'
+2025-03-21 04:52:44,686 - CarPartsDB - INFO - Created new part with ID: 5724
+2025-03-21 04:52:44,701 - CarPartsDB - INFO - Successfully verified part was added with ID: 5724
+2025-03-21 04:52:46,211 - CarPartsDB - INFO - Thread 24524: Database connection established
+2025-03-21 04:52:46,211 - CarPartsDB - INFO - Thread 24524: Fetching all parts
+2025-03-21 04:53:58,925 - CarPartsDB - INFO - Thread 8892: Deleting part 5723
+2025-03-21 04:54:00,592 - CarPartsDB - INFO - Thread 23608: Database connection established
+2025-03-21 04:54:00,592 - CarPartsDB - INFO - Thread 23608: Fetching all parts
+2025-03-21 04:54:08,048 - main - INFO - Cleaning up application resources...
+2025-03-21 04:54:08,049 - main - INFO - Closing database connection...
+2025-03-21 04:54:08,049 - main - INFO - Application shutdown complete
+2025-03-21 04:56:55,600 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:56:55,602 - main - INFO - Current user: BaselAM
+2025-03-21 04:56:55,746 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:56:55,747 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:56:55,748 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:56:55,748 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:56:55,748 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:56:55,748 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:56:55,748 - main - INFO - Initializing database connection...
+2025-03-21 04:56:55,762 - CarPartsDB - INFO - Thread 2492: Database connection established
+2025-03-21 04:56:55,762 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:56:55,762 - CarPartsDB - INFO - Thread 2492: Fetching all parts
+2025-03-21 04:56:55,786 - main - INFO - Connected to database. Found 2851 parts.
+2025-03-21 04:56:58,128 - CarPartsDB - INFO - Thread 13644: Database connection established
+2025-03-21 04:56:58,128 - CarPartsDB - INFO - Thread 13644: Fetching all parts
+2025-03-21 04:57:03,814 - main - INFO - User logged in: abumukh
+2025-03-21 04:57:16,246 - main - INFO - Cleaning up application resources...
+2025-03-21 04:57:16,247 - main - INFO - Closing database connection...
+2025-03-21 04:57:16,247 - main - INFO - Application shutdown complete
+2025-03-21 04:59:52,513 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 04:59:52,514 - main - INFO - Current user: BaselAM
+2025-03-21 04:59:52,638 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 04:59:52,638 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 04:59:52,638 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 04:59:52,638 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 04:59:52,639 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 04:59:52,639 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 04:59:52,639 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 04:59:52,640 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 04:59:52,640 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 04:59:52,640 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 04:59:52,641 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 04:59:52,641 - main - INFO - Initializing database connection...
+2025-03-21 04:59:52,654 - CarPartsDB - INFO - Thread 25348: Database connection established
+2025-03-21 04:59:52,656 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 04:59:52,656 - CarPartsDB - INFO - Thread 25348: Fetching all parts
+2025-03-21 04:59:52,687 - main - INFO - Connected to database. Found 2851 parts.
+2025-03-21 04:59:55,037 - CarPartsDB - INFO - Thread 12376: Database connection established
+2025-03-21 04:59:55,038 - CarPartsDB - INFO - Thread 12376: Fetching all parts
+2025-03-21 05:00:00,366 - main - INFO - User logged in: abumukh
+2025-03-21 05:00:14,318 - main - INFO - Cleaning up application resources...
+2025-03-21 05:00:14,318 - main - INFO - Closing database connection...
+2025-03-21 05:00:14,318 - main - INFO - Application shutdown complete
+2025-03-21 05:01:58,158 - main - INFO - Application starting at: 2025-03-20 00:09:53
+2025-03-21 05:01:58,160 - main - INFO - Current user: BaselAM
+2025-03-21 05:01:58,250 - main - WARNING - Missing icon file: add_icon.png
+2025-03-21 05:01:58,251 - main - WARNING - Missing icon file: select_icon.png
+2025-03-21 05:01:58,251 - main - WARNING - Missing icon file: delete_icon.png
+2025-03-21 05:01:58,251 - main - WARNING - Missing icon file: filter_icon.png
+2025-03-21 05:01:58,252 - main - WARNING - Missing icon file: export_icon.png
+2025-03-21 05:01:58,252 - main - WARNING - Missing icon file: refresh_icon.png
+2025-03-21 05:01:58,252 - main - WARNING - Missing icon file: info_icon.png
+2025-03-21 05:01:58,252 - main - WARNING - Missing icon file: success_icon.png
+2025-03-21 05:01:58,252 - main - WARNING - Missing icon file: error_icon.png
+2025-03-21 05:01:58,253 - main - WARNING - Missing icon file: warning_icon.png
+2025-03-21 05:01:58,253 - main - WARNING - Missing icon file: close_icon.png
+2025-03-21 05:01:58,253 - main - INFO - Initializing database connection...
+2025-03-21 05:01:58,265 - CarPartsDB - INFO - Thread 24288: Database connection established
+2025-03-21 05:01:58,265 - CarPartsDB - INFO - Initialized database connection to C:\Users\97253\Desktop\BeastMode-CSIntro-Excercises\CousinTestProject\database\car_parts.db
+2025-03-21 05:01:58,265 - CarPartsDB - INFO - Thread 24288: Fetching all parts
+2025-03-21 05:01:58,285 - main - INFO - Connected to database. Found 2851 parts.
+2025-03-21 05:02:00,160 - CarPartsDB - INFO - Thread 3876: Database connection established
+2025-03-21 05:02:00,160 - CarPartsDB - INFO - Thread 3876: Fetching all parts
+2025-03-21 05:02:06,279 - main - INFO - User logged in: abumukh
+2025-03-21 05:04:29,489 - main - INFO - Cleaning up application resources...
+2025-03-21 05:04:29,491 - main - INFO - Closing database connection...
+2025-03-21 05:04:29,491 - main - INFO - Application shutdown complete
