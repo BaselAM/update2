@@ -1,10 +1,127 @@
-from PyQt5.QtCore import Qt, pyqtSignal, QTimer
+from PyQt5.QtCore import Qt, pyqtSignal, QTimer, QPoint, QEvent
 from PyQt5.QtWidgets import (QWidget, QLineEdit, QHBoxLayout, QPushButton,
-                             QCompleter, QListView, QFrame, QShortcut)
-from PyQt5.QtGui import QFont, QColor, QKeySequence
+                             QCompleter, QListView, QFrame, QShortcut,
+                             QAbstractItemView, QStyledItemDelegate)
+from PyQt5.QtGui import QFont, QColor, QKeySequence, QPainter, QPen, QBrush, QPainterPath
 from typing import List, Optional
 
 from themes import get_color
+
+
+class SuggestionDelegate(QStyledItemDelegate):
+    """Custom delegate for styling suggestion items in the completer popup"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.hover_index = -1
+
+    def paint(self, painter, option, index):
+        """Override paint method to provide custom styling for each suggestion item"""
+        # Get colors from parent theme if available
+        try:
+            bg_color = get_color('background')
+            text_color = get_color('text')
+            accent_color = get_color('highlight')
+
+            # Determine if we need dark or light theme colors
+            is_dark = QColor(bg_color).lightness() < 128
+            hover_bg = QColor(accent_color).lighter(130) if is_dark else QColor(
+                accent_color).lighter(150)
+            hover_bg.setAlpha(70)  # Semi-transparent hover effect
+        except:
+            # Fallback colors
+            bg_color = "#ffffff" if option.state & QAbstractItemView.State_Selected else "#f5f5f5"
+            text_color = "#333333"
+            accent_color = "#4a90e2"
+            hover_bg = QColor(accent_color)
+            hover_bg.setAlpha(70)
+            is_dark = False
+
+        # Selected item styling
+        if option.state & QAbstractItemView.State_Selected:
+            painter.save()
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(QColor(accent_color))
+
+            # Draw rounded rectangle for selection
+            path = QPainterPath()
+            path.addRoundedRect(option.rect.adjusted(4, 2, -4, -2), 6, 6)
+            painter.drawPath(path)
+
+            # Draw text in white or contrasting color
+            text_brush = QBrush(QColor("white" if is_dark else "#ffffff"))
+            painter.setPen(QPen(text_brush, 1))
+            font = painter.font()
+            font.setBold(True)
+            painter.setFont(font)
+            painter.drawText(option.rect.adjusted(15, 0, -10, 0), Qt.AlignVCenter,
+                             index.data())
+            painter.restore()
+
+        # Hover styling (not selected)
+        elif self.hover_index == index.row():
+            painter.save()
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(hover_bg)
+
+            # Draw rounded rectangle for hover
+            path = QPainterPath()
+            path.addRoundedRect(option.rect.adjusted(4, 2, -4, -2), 6, 6)
+            painter.drawPath(path)
+
+            # Draw text
+            painter.setPen(QPen(QColor(text_color), 1))
+            painter.drawText(option.rect.adjusted(15, 0, -10, 0), Qt.AlignVCenter,
+                             index.data())
+            painter.restore()
+
+        # Normal item styling
+        else:
+            painter.save()
+            painter.setPen(QPen(QColor(text_color), 1))
+            painter.drawText(option.rect.adjusted(15, 0, -10, 0), Qt.AlignVCenter,
+                             index.data())
+            painter.restore()
+
+    def sizeHint(self, option, index):
+        """Adjust the size of suggestion items for better spacing"""
+        size = super().sizeHint(option, index)
+        return QPoint(size.width(), size.height() + 10)  # Add vertical padding
+
+
+class ModernCompleterPopup(QListView):
+    """Enhanced list view for search suggestions with elegant visuals"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("suggestionsPopup")
+        self.setFont(QFont("Arial", 10))
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setFrameShape(QFrame.NoFrame)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setMouseTracking(True)  # Enable mouse tracking for hover effects
+
+        # Use custom delegate for item rendering
+        self.delegate = SuggestionDelegate(self)
+        self.setItemDelegate(self.delegate)
+
+    def mouseMoveEvent(self, event):
+        """Track mouse position for hover effects"""
+        index = self.indexAt(event.pos())
+        if index.isValid():
+            self.delegate.hover_index = index.row()
+        else:
+            self.delegate.hover_index = -1
+        self.viewport().update()
+        super().mouseMoveEvent(event)
+
+    def leaveEvent(self, event):
+        """Clear hover state when mouse leaves the widget"""
+        self.delegate.hover_index = -1
+        self.viewport().update()
+        super().leaveEvent(event)
 
 
 class ModernSearchWidget(QWidget):
@@ -122,10 +239,10 @@ class ModernSearchWidget(QWidget):
             Qt.MatchContains)  # Match anywhere in suggestion text
 
         # Create custom popup for suggestions
-        popup = QListView()
-        popup.setObjectName("suggestionsPopup")
-        popup.setFont(QFont("Arial", 10))
-        popup.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        popup = ModernCompleterPopup()  # Use the enhanced popup class
+        popup.setMinimumWidth(300)  # Ensure popup is wide enough for suggestions
+
+        # Style the popup scrollbar to match theme
         self.completer.setPopup(popup)
 
         # Set completer for search input
@@ -228,9 +345,8 @@ class ModernSearchWidget(QWidget):
             self.completer.setFilterMode(Qt.MatchContains)
 
             # Preserve popup settings
-            popup = QListView()
-            popup.setObjectName("suggestionsPopup")
-            popup.setFont(QFont("Arial", 10))
+            popup = ModernCompleterPopup()
+            popup.setMinimumWidth(300)
             self.completer.setPopup(popup)
 
             self.search_edit.setCompleter(self.completer)
@@ -241,6 +357,7 @@ class ModernSearchWidget(QWidget):
             # Get colors from theme system
             bg_color = get_color('header')
             text_color = get_color('text')
+            card_bg = get_color('card_bg', get_color('background'))
 
             # Try to get accent color, fall back to a default if not available
             try:
@@ -268,12 +385,16 @@ class ModernSearchWidget(QWidget):
                 button_hover = "rgba(255, 255, 255, 0.25)"
                 selection_bg = accent_color
                 focus_border = accent_color
+                popup_bg = QColor(card_bg).darker(110).name()
+                shadow_color = "rgba(0, 0, 0, 0.7)"
             else:
                 container_bg = "rgba(0, 0, 0, 0.05)"
                 button_bg = "rgba(0, 0, 0, 0.08)"
                 button_hover = "rgba(0, 0, 0, 0.15)"
                 selection_bg = accent_color
                 focus_border = accent_color
+                popup_bg = QColor(card_bg).lighter(103).name()
+                shadow_color = "rgba(0, 0, 0, 0.2)"
 
             # Apply unified styling with focus states and transitions
             self.setStyleSheet(f"""
@@ -334,24 +455,89 @@ class ModernSearchWidget(QWidget):
                     color: white;
                 }}
 
+                /* Enhanced suggestion popup styling */
                 #suggestionsPopup {{
-                    background-color: {container_bg};
+                    background-color: {popup_bg};
                     border: 1px solid {focus_border};
-                    border-radius: 10px;
-                    padding: 5px;
+                    border-radius: 12px;
+                    padding: 8px 4px;
+                    margin-top: 2px;
+                    font-size: 11pt;
                 }}
 
-                #suggestionsPopup::item {{
-                    padding: 5px 10px;
-                    border-radius: 5px;
-                    color: {text_color};
+                /* Scrollbar styling for suggestions popup */
+                #suggestionsPopup QScrollBar:vertical {{
+                    background: transparent;
+                    width: 6px;
+                    margin: 4px 2px;
+                    border-radius: 3px;
                 }}
 
-                #suggestionsPopup::item:selected {{
-                    background-color: {accent_color};
-                    color: white;
+                #suggestionsPopup QScrollBar::handle:vertical {{
+                    background: {focus_border};
+                    border-radius: 3px;
+                    min-height: 20px;
+                }}
+
+                #suggestionsPopup QScrollBar::handle:vertical:hover {{
+                    background: {accent_color};
+                }}
+
+                #suggestionsPopup QScrollBar::add-line:vertical,
+                #suggestionsPopup QScrollBar::sub-line:vertical {{
+                    height: 0px;
+                }}
+
+                #suggestionsPopup QScrollBar::add-page:vertical,
+                #suggestionsPopup QScrollBar::sub-page:vertical {{
+                    background: transparent;
                 }}
             """)
+
+            # Style the completer popup if it exists
+            if hasattr(self, 'completer') and self.completer:
+                popup = self.completer.popup()
+                if popup:
+                    # Apply a drop shadow effect to the popup
+                    popup.setStyleSheet(f"""
+                        #suggestionsPopup {{
+                            background-color: {popup_bg};
+                            border: 1px solid {focus_border};
+                            border-radius: 12px;
+                            padding: 8px 4px;
+                            margin-top: 2px;
+                            font-size: 11pt;
+                        }}
+
+                        /* Scrollbar styling for suggestions popup */
+                        QScrollBar:vertical {{
+                            background: transparent;
+                            width: 6px;
+                            margin: 4px 2px;
+                            border-radius: 3px;
+                        }}
+
+                        QScrollBar::handle:vertical {{
+                            background: {focus_border};
+                            border-radius: 3px;
+                            min-height: 20px;
+                        }}
+
+                        QScrollBar::handle:vertical:hover {{
+                            background: {accent_color};
+                        }}
+
+                        QScrollBar::add-line:vertical,
+                        QScrollBar::sub-line:vertical {{
+                            height: 0px;
+                        }}
+
+                        QScrollBar::add-page:vertical,
+                        QScrollBar::sub-page:vertical {{
+                            background: transparent;
+                        }}
+                    """)
+
         except Exception as e:
             print(f"Error applying theme: {str(e)}")
             # Fall back to basic styling that works in most cases

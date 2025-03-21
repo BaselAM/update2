@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt, QSize, QTimer, pyqtSlot, QMetaObject, Q_ARG, QEvent
 
 from themes import get_color
 from .dialogs import FilterDialog, AddProductDialog, DeleteConfirmationDialog
+from .dialogs.themed_meesage import ThemedMessageDialog
 from .components import StatusBar
 from .product_table import ProductsTable
 from .utils import ProductValidator, export_to_csv
@@ -615,7 +616,6 @@ class ProductsWidget(QWidget):
 
 
     @pyqtSlot(dict)
-    @pyqtSlot(dict)
     def process_add_product(self, data):
         try:
             print(f"[{self.__class__.__name__}] Processing add product request: {data}")
@@ -628,13 +628,15 @@ class ProductsWidget(QWidget):
 
             existing = self.db.get_part_by_name(sanitized_data['product_name'])
             if existing:
-                confirm = QMessageBox.question(
-                    self,
+                # Replace QMessageBox with ThemedMessageDialog
+                confirm = ThemedMessageDialog.confirm(
                     self.translator.t('overwrite_title'),
                     self.translator.t('overwrite_message'),
-                    QMessageBox.Yes | QMessageBox.No
+                    parent=self,
+                    icon_type="question"
                 )
-                if confirm == QMessageBox.Yes:
+
+                if confirm:
                     print(
                         f"[{self.__class__.__name__}] Updating existing product with ID: {existing[0]}")
                     success = self.db.update_part(existing[0], **sanitized_data)

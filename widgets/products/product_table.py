@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QTableView, QAbstractItemView, QHeaderView,
-                            QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout,
-                            QWidget, QAbstractButton)
+                             QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout,
+                             QWidget, QAbstractButton)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QColor
 from themes import get_color
@@ -26,7 +26,17 @@ class ProductsTable(QFrame):
         self.table = QTableWidget()
         self.table.setColumnCount(7)
         self.update_headers()
+
+        # Hide vertical header completely - this removes row numbers
         self.table.verticalHeader().setVisible(False)
+
+        # Try to hide the corner button if we can find it
+        try:
+            corner_button = self.table.findChild(QAbstractButton)
+            if corner_button:
+                corner_button.hide()
+        except:
+            pass  # Ignore any errors
 
         # Set row height to make cells larger
         self.table.verticalHeader().setDefaultSectionSize(40)  # Taller rows
@@ -57,14 +67,11 @@ class ProductsTable(QFrame):
         # Remove grid for a sleeker look
         self.table.setShowGrid(False)
 
-        # Disable the corner button
-        self.table.setCornerButtonEnabled(False)
-
-        # Explicitly style the corner widget if it exists
-        corner_widget = self.table.findChild(QWidget)
-        if corner_widget:
-            corner_widget.setStyleSheet(
-                f"background-color: {get_color('background')}; border: none;")
+        # Disable the corner button - safely try another approach
+        try:
+            self.table.setCornerButtonEnabled(False)
+        except:
+            pass  # Ignore any errors if this method doesn't exist
 
         # Apply themed delegates for elegant editing experience
         self.item_delegate = ThemedItemDelegate()
@@ -81,6 +88,7 @@ class ProductsTable(QFrame):
 
         # Apply initial styling
         self.apply_theme()
+
     def update_headers(self):
         """Update table headers with current translations"""
         headers = [
@@ -221,7 +229,6 @@ class ProductsTable(QFrame):
                 return True
         return False
 
-    # Only update the apply_theme method to improve cell appearance
     def apply_theme(self):
         """Apply current theme to table with enhanced styling"""
         bg_color = get_color('background')
@@ -317,22 +324,35 @@ class ProductsTable(QFrame):
                 width: 0px;
             }}
 
-            /* Multiple ways to target the corner widget */
-            QAbstractScrollArea::corner {{
-                background: {bg_color};
-                border: none;
-            }}
-            QTableCornerButton::section {{
-                background: {bg_color};
-                border: none;
-            }}
+            /* Comprehensive corner styling */
             QScrollBar::corner {{
                 background: {bg_color};
                 border: none;
             }}
-            /* Ensure all corners and borders are properly styled */
-            QWidget {{
-                border-bottom-right-radius: 6px;
+            QAbstractScrollArea::corner {{
+                background: {bg_color};
+                border: none;
+            }}
+
+            /* Ensure header corners are styled too */
+            QHeaderView {{ 
+                background-color: {bg_color}; 
+            }}
+            QHeaderView::corner {{
+                background-color: {bg_color};
+                border: none;
+            }}
+
+            /* Target scroll bar corner specifically */
+            QAbstractScrollArea QScrollBar::corner {{
+                background: {bg_color};
+                border: none;
+            }}
+
+            /* Style any other potential widgets in the table */
+            QTableWidget > QWidget {{
+                background-color: {bg_color};
+                border: none;
             }}
         """
         self.table.setStyleSheet(table_style)
@@ -340,10 +360,9 @@ class ProductsTable(QFrame):
         # As a fallback, directly set the background of the table viewport
         self.table.viewport().setStyleSheet(f"background: {bg_color};")
 
-        # Also add direct event-based styling after theme application
-        corner = self.table.findChild(QAbstractButton)
-        if corner:
-            corner.setStyleSheet(f"background-color: {bg_color}; border: none;")
+        # Style all child widgets to prevent any white boxes
+        for child in self.table.findChildren(QWidget):
+            child.setStyleSheet(f"background-color: {bg_color}; border: none;")
 
     def resizeEvent(self, event):
         """Handle resize events to adjust column widths"""
