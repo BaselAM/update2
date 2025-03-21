@@ -21,10 +21,21 @@ class ProductsWidget(QWidget):
         self.db = db
         self.all_products = []
         self.validator = ProductValidator(translator)
+
+        # Add this line to store the last filter configuration
+        self.last_filter_settings = {
+            "category": "",
+            "name": "",
+            "car_name": "",
+            "model": "",
+            "min_price": None,
+            "max_price": None,
+            "stock_status": None
+        }
+
         self.setup_ui()
         self.apply_theme()
         QTimer.singleShot(100, self.load_products)
-
     def setup_ui(self):
         # Add object name for the container to apply enhanced borders
         self.setObjectName("productsContainer")
@@ -354,10 +365,17 @@ class ProductsWidget(QWidget):
 
     def show_filter_dialog(self):
         dialog = FilterDialog(self.translator, self)
+
+        # Initialize dialog with last filter settings
+        dialog.initialize_from_saved_settings(self.last_filter_settings)
+
         if dialog.exec_() == QDialog.Accepted:
             filters = dialog.get_filters()
+            # Save the current filter settings for next time
+            self.last_filter_settings = filters.copy()
             self.filter_products(filters)
 
+    # Update the filter_products method in ProductsWidget class
     def filter_products(self, filters):
         try:
             if not self.all_products:
@@ -367,16 +385,41 @@ class ProductsWidget(QWidget):
             for prod in self.all_products:
                 category = prod[1] if prod[1] else ""
                 name = prod[4] if prod[4] else ""
-                price = float(prod[6])
+                car_name = prod[2] if prod[2] else ""
+                model = prod[3] if prod[3] else ""
+                price = float(prod[6]) if prod[6] else 0
+                quantity = int(prod[5]) if prod[5] else 0
 
-                if filters["category"] and filters["category"].lower() not in category.lower():
+                # Check category
+                if filters["category"] and filters[
+                    "category"].lower() not in category.lower():
                     continue
+
+                # Check name
                 if filters["name"] and filters["name"].lower() not in name.lower():
                     continue
+
+                # Check car name
+                if filters["car_name"] and filters[
+                    "car_name"].lower() not in car_name.lower():
+                    continue
+
+                # Check model
+                if filters["model"] and filters["model"].lower() not in model.lower():
+                    continue
+
+                # Check price range
                 if filters["min_price"] is not None and price < filters["min_price"]:
                     continue
                 if filters["max_price"] is not None and price > filters["max_price"]:
                     continue
+
+                # Check stock status
+                if filters["stock_status"] == "in_stock" and quantity <= 0:
+                    continue
+                if filters["stock_status"] == "out_of_stock" and quantity > 0:
+                    continue
+
                 filtered.append(prod)
 
             self.product_table.update_table_data(filtered)
@@ -390,6 +433,8 @@ class ProductsWidget(QWidget):
 
         except Exception as e:
             print("Error filtering products:", e)
+            import traceback
+            print(traceback.format_exc())
             self.status_bar.show_message(self.translator.t('filter_error'), "error")
 
     def on_cell_changed(self, row, column):
@@ -519,6 +564,17 @@ class ProductsWidget(QWidget):
             except Exception as direct_error:
                 print(f"Direct loading also failed: {direct_error}")
                 self.status_bar.show_message(self.translator.t('load_error'), "error")
+
+        # Reset filter settings when loading all products
+        self.last_filter_settings = {
+            "category": "",
+            "name": "",
+            "car_name": "",
+            "model": "",
+            "min_price": None,
+            "max_price": None,
+            "stock_status": None
+        }
 
     @pyqtSlot(object)
     def handle_loaded_products(self, products):

@@ -1,8 +1,7 @@
-
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
                              QPushButton, QFormLayout, QDoubleSpinBox, QGroupBox,
                              QComboBox, QCheckBox, QRadioButton, QGridLayout)
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QIcon, QColor
 
 from themes import get_color
@@ -37,7 +36,6 @@ class BetterDoubleSpinBox(QDoubleSpinBox):
     def setSpecialValueText(self, text):
         self._special_text = text
         super().setSpecialValueText(text)
-
 
 
 class FilterDialog(ElegantDialog):
@@ -254,7 +252,16 @@ class FilterDialog(ElegantDialog):
         self.max_price.setValue(0)
         self.in_stock_all.setChecked(True)
 
-    # Update the apply_filters method in the FilterDialog class:
+        # Reset the filters dictionary too
+        self.filters = {
+            "category": "",
+            "name": "",
+            "car_name": "",
+            "model": "",
+            "min_price": None,
+            "max_price": None,
+            "stock_status": None
+        }
 
     def apply_filters(self):
         """Apply filters and store values with simplified stock status handling."""
@@ -283,6 +290,41 @@ class FilterDialog(ElegantDialog):
             self.filters["stock_status"] = None
 
         self.accept()
+
     def get_filters(self):
         """Return the current filter settings."""
         return self.filters
+
+    # Add this method to the FilterDialog class
+    def initialize_from_saved_settings(self, saved_settings):
+        """Initialize the dialog with previously saved settings"""
+        if not saved_settings:
+            return
+
+        # Set text fields
+        if saved_settings.get("category"):
+            self.category_input.setText(saved_settings["category"])
+
+        if saved_settings.get("name"):
+            self.name_input.setText(saved_settings["name"])
+
+        if saved_settings.get("car_name"):
+            self.car_input.setText(saved_settings["car_name"])
+
+        if saved_settings.get("model"):
+            self.model_input.setText(saved_settings["model"])
+
+        # Set price range
+        if saved_settings.get("min_price") is not None:
+            self.min_price.setValue(saved_settings["min_price"])
+
+        if saved_settings.get("max_price") is not None:
+            self.max_price.setValue(saved_settings["max_price"])
+
+        # Set stock status radio buttons
+        if saved_settings.get("stock_status") == "in_stock":
+            self.in_stock_yes.setChecked(True)
+        elif saved_settings.get("stock_status") == "out_of_stock":
+            self.in_stock_no.setChecked(True)
+        else:
+            self.in_stock_all.setChecked(True)
