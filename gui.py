@@ -9,7 +9,7 @@ from PyQt5.QtGui import QIcon
 # Import widgets
 from widgets.layout import HeaderWidget, FooterWidget, CopyrightWidget
 from widgets.header import TopBarWidget
-from widgets.products.product_widget import ProductsWidget
+from widgets.products import ProductsWidget
 from widgets.statistics import StatisticsWidget
 from widgets.settings import SettingsWidget
 from widgets.help import HelpWidget
