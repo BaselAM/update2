@@ -5,7 +5,8 @@ from typing import Optional
 from .search_widget import ModernSearchWidget
 from .notifications_widget import NotificationsWidget
 from .navigation_widget import NavigationWidget
-from .chat_widget import ChatWidget
+from widgets.header.chatbot.direct_chat import DirectChatWidget as ChatWidget  # Updated import
+from widgets.header.chatbot.chat_handler import ChatSignalBlocker  # New import
 from .date_time_widget import LuxuryDateTimeWidget
 from themes import get_color
 
@@ -58,7 +59,12 @@ class TopBarWidget(QWidget):
 
         # Create chat widget with expandable chat interface
         self.chat_widget = ChatWidget(self.translator)
-        self.chat_widget.chat_submitted.connect(self.chat_clicked)
+
+        # Create a signal blocker to prevent "coming soon" message
+        self.chat_blocker = ChatSignalBlocker()
+
+        # Connect to our dummy signal instead of the actual chat widget signal
+        self.chat_blocker.chat_submitted.connect(self.chat_clicked)
 
         # Create notifications widget with dropdown
         self.notifications_widget = NotificationsWidget(self.translator)

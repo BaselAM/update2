@@ -1,0 +1,1086 @@
+{
+  "car_makes": {
+    "מזדה": {
+      "english": "Mazda",
+      "confidence": 0.95,
+      "aliases": [
+        "מאזדה",
+        "מאזדא",
+        "מאזדה",
+        "mazda"
+      ]
+    },
+    "טויוטה": {
+      "english": "Toyota",
+      "confidence": 0.95,
+      "aliases": [
+        "טויוטא",
+        "toyota"
+      ]
+    },
+    "יונדאי": {
+      "english": "Hyundai",
+      "confidence": 0.95,
+      "aliases": [
+        "יונדאי",
+        "hyundai"
+      ]
+    },
+    "קיה": {
+      "english": "Kia",
+      "confidence": 0.95,
+      "aliases": [
+        "קיאה",
+        "kia"
+      ]
+    },
+    "סקודה": {
+      "english": "Skoda",
+      "confidence": 0.95,
+      "aliases": [
+        "סקודא",
+        "škoda",
+        "skoda"
+      ]
+    },
+    "פורד": {
+      "english": "Ford",
+      "confidence": 0.95,
+      "aliases": [
+        "ford"
+      ]
+    },
+    "סוזוקי": {
+      "english": "Suzuki",
+      "confidence": 0.95,
+      "aliases": [
+        "סוזוקי",
+        "suzuki"
+      ]
+    },
+    "ניסאן": {
+      "english": "Nissan",
+      "confidence": 0.95,
+      "aliases": [
+        "ניסן",
+        "nissan"
+      ]
+    },
+    "הונדה": {
+      "english": "Honda",
+      "confidence": 0.95,
+      "aliases": [
+        "honda"
+      ]
+    },
+    "מיצובישי": {
+      "english": "Mitsubishi",
+      "confidence": 0.95,
+      "aliases": [
+        "מיצובישי",
+        "mitsubishi"
+      ]
+    },
+    "ב.מ.וו": {
+      "english": "BMW",
+      "confidence": 0.95,
+      "aliases": [
+        "ב.מ.וו",
+        "במוו",
+        "bmw"
+      ]
+    },
+    "רנו": {
+      "english": "Renault",
+      "confidence": 0.95,
+      "aliases": [
+        "רנו",
+        "renault"
+      ]
+    },
+    "פיג'ו": {
+      "english": "Peugeot",
+      "confidence": 0.95,
+      "aliases": [
+        "פיג'ו",
+        "פגו",
+        "פיגו",
+        "peugeot"
+      ]
+    },
+    "סיטרואן": {
+      "english": "Citroen",
+      "confidence": 0.95,
+      "aliases": [
+        "סיטרואן",
+        "citroen",
+        "citroën"
+      ]
+    },
+    "אאודי": {
+      "english": "Audi",
+      "confidence": 0.95,
+      "aliases": [
+        "אאודי",
+        "אודי",
+        "audi"
+      ]
+    },
+    "מרצדס": {
+      "english": "Mercedes",
+      "confidence": 0.95,
+      "aliases": [
+        "מרצדס בנץ",
+        "mercedes",
+        "mercedes-benz"
+      ]
+    },
+    "פולקסווגן": {
+      "english": "Volkswagen",
+      "confidence": 0.95,
+      "aliases": [
+        "פולקסוואגן",
+        "וולקסווגן",
+        "volkswagen",
+        "vw"
+      ]
+    },
+    "סובארו": {
+      "english": "Subaru",
+      "confidence": 0.95,
+      "aliases": [
+        "סובארו",
+        "subaru"
+      ]
+    },
+    "דייהטסו": {
+      "english": "Daihatsu",
+      "confidence": 0.95,
+      "aliases": [
+        "דייהטסו",
+        "daihatsu"
+      ]
+    },
+    "שברולט": {
+      "english": "Chevrolet",
+      "confidence": 0.95,
+      "aliases": [
+        "שבראולט",
+        "שברולט",
+        "chevrolet",
+        "chevy"
+      ]
+    },
+    "אופל": {
+      "english": "Opel",
+      "confidence": 0.95,
+      "aliases": [
+        "אופל",
+        "opel"
+      ]
+    },
+    "איסוזו": {
+      "english": "Isuzu",
+      "confidence": 0.95,
+      "aliases": [
+        "איסוזו",
+        "isuzu"
+      ]
+    },
+    "לנדרובר": {
+      "english": "Land Rover",
+      "confidence": 0.95,
+      "aliases": [
+        "לנד רובר",
+        "land rover"
+      ]
+    },
+    "לקסוס": {
+      "english": "Lexus",
+      "confidence": 0.95,
+      "aliases": [
+        "לקסוס",
+        "lexus"
+      ]
+    },
+    "וולוו": {
+      "english": "Volvo",
+      "confidence": 0.95,
+      "aliases": [
+        "וולוו",
+        "volvo"
+      ]
+    },
+    "פיאט": {
+      "english": "Fiat",
+      "confidence": 0.95,
+      "aliases": [
+        "פיאט",
+        "fiat"
+      ]
+    },
+    "אלפא רומאו": {
+      "english": "Alfa Romeo",
+      "confidence": 0.95,
+      "aliases": [
+        "אלפא",
+        "alfa",
+        "alfa romeo"
+      ]
+    }
+  },
+  "car_models": {
+    "קורולה": {
+      "english": "Corolla",
+      "confidence": 0.95,
+      "make": "Toyota",
+      "aliases": [
+        "corolla"
+      ]
+    },
+    "סיויק": {
+      "english": "Civic",
+      "confidence": 0.95,
+      "make": "Honda",
+      "aliases": [
+        "civic"
+      ]
+    },
+    "אוקטביה": {
+      "english": "Octavia",
+      "confidence": 0.95,
+      "make": "Skoda",
+      "aliases": [
+        "octavia"
+      ]
+    },
+    "פביה": {
+      "english": "Fabia",
+      "confidence": 0.95,
+      "make": "Skoda",
+      "aliases": [
+        "fabia"
+      ]
+    },
+    "פוקוס": {
+      "english": "Focus",
+      "confidence": 0.95,
+      "make": "Ford",
+      "aliases": [
+        "focus"
+      ]
+    },
+    "אקסנט": {
+      "english": "Accent",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "accent"
+      ]
+    },
+    "לנסר": {
+      "english": "Lancer",
+      "confidence": 0.95,
+      "make": "Mitsubishi",
+      "aliases": [
+        "lancer"
+      ]
+    },
+    "גולף": {
+      "english": "Golf",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "golf"
+      ]
+    },
+    "פולו": {
+      "english": "Polo",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "polo"
+      ]
+    },
+    "ראב 4": {
+      "english": "RAV4",
+      "confidence": 0.95,
+      "make": "Toyota",
+      "aliases": [
+        "rav4",
+        "rav 4"
+      ]
+    },
+    "קרוז": {
+      "english": "Cruze",
+      "confidence": 0.95,
+      "make": "Chevrolet",
+      "aliases": [
+        "cruze"
+      ]
+    },
+    "לאון": {
+      "english": "Leon",
+      "confidence": 0.95,
+      "make": "Seat",
+      "aliases": [
+        "leon"
+      ]
+    },
+    "קודיאק": {
+      "english": "Kodiaq",
+      "confidence": 0.95,
+      "make": "Skoda",
+      "aliases": [
+        "kodiaq"
+      ]
+    },
+    "סנטה פה": {
+      "english": "Santa Fe",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "santa fe"
+      ]
+    },
+    "טוסון": {
+      "english": "Tucson",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "tucson"
+      ]
+    },
+    "סורנטו": {
+      "english": "Sorento",
+      "confidence": 0.95,
+      "make": "Kia",
+      "aliases": [
+        "sorento"
+      ]
+    },
+    "ספורטאג": {
+      "english": "Sportage",
+      "confidence": 0.95,
+      "make": "Kia",
+      "aliases": [
+        "sportage"
+      ]
+    },
+    "קנגו": {
+      "english": "Kangoo",
+      "confidence": 0.95,
+      "make": "Renault",
+      "aliases": [
+        "kangoo"
+      ]
+    },
+    "מגאן": {
+      "english": "Megane",
+      "confidence": 0.95,
+      "make": "Renault",
+      "aliases": [
+        "megane"
+      ]
+    },
+    "קליאו": {
+      "english": "Clio",
+      "confidence": 0.95,
+      "make": "Renault",
+      "aliases": [
+        "clio"
+      ]
+    },
+    "לוגן": {
+      "english": "Logan",
+      "confidence": 0.95,
+      "make": "Dacia",
+      "aliases": [
+        "logan"
+      ]
+    },
+    "ג'טה": {
+      "english": "Jetta",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "jetta",
+        "g'eta"
+      ]
+    },
+    "פסאט": {
+      "english": "Passat",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "passat"
+      ]
+    },
+    "גרנד צ'רוקי": {
+      "english": "Grand Cherokee",
+      "confidence": 0.95,
+      "make": "Jeep",
+      "aliases": [
+        "grand cherokee"
+      ]
+    },
+    "קורסה": {
+      "english": "Corsa",
+      "confidence": 0.95,
+      "make": "Opel",
+      "aliases": [
+        "corsa"
+      ]
+    },
+    "אסטרה": {
+      "english": "Astra",
+      "confidence": 0.95,
+      "make": "Opel",
+      "aliases": [
+        "astra"
+      ]
+    },
+    "רפיד": {
+      "english": "Rapid",
+      "confidence": 0.95,
+      "make": "Skoda",
+      "aliases": [
+        "rapid"
+      ]
+    },
+    "סופרב": {
+      "english": "Superb",
+      "confidence": 0.95,
+      "make": "Skoda",
+      "aliases": [
+        "superb"
+      ]
+    },
+    "איביזה": {
+      "english": "Ibiza",
+      "confidence": 0.95,
+      "make": "Seat",
+      "aliases": [
+        "ibiza"
+      ]
+    },
+    "טוארג": {
+      "english": "Touareg",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "touareg"
+      ]
+    },
+    "טיגואן": {
+      "english": "Tiguan",
+      "confidence": 0.95,
+      "make": "Volkswagen",
+      "aliases": [
+        "tiguan"
+      ]
+    },
+    "I10": {
+      "english": "i10",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "i10"
+      ]
+    },
+    "I20": {
+      "english": "i20",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "i20"
+      ]
+    },
+    "I30": {
+      "english": "i30",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "i30"
+      ]
+    },
+    "I35": {
+      "english": "i35",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "i35"
+      ]
+    },
+    "I25": {
+      "english": "i25",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "i25"
+      ]
+    },
+    "IX35": {
+      "english": "ix35",
+      "confidence": 0.95,
+      "make": "Hyundai",
+      "aliases": [
+        "ix35"
+      ]
+    },
+    "SX4": {
+      "english": "SX4",
+      "confidence": 0.95,
+      "make": "Suzuki",
+      "aliases": [
+        "sx4"
+      ]
+    },
+    "CX5": {
+      "english": "CX-5",
+      "confidence": 0.95,
+      "make": "Mazda",
+      "aliases": [
+        "cx5",
+        "cx-5"
+      ]
+    }
+  },
+  "part_categories": {
+    "פילטר": {
+      "english": "Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "מסנן",
+        "filter"
+      ]
+    },
+    "פ.": {
+      "english": "Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר",
+        "מסנן",
+        "filter"
+      ]
+    },
+    "פ.אויר": {
+      "english": "Air Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר אויר",
+        "מסנן אויר",
+        "air filter"
+      ]
+    },
+    "פ.שמן": {
+      "english": "Oil Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר שמן",
+        "מסנן שמן",
+        "oil filter"
+      ]
+    },
+    "פ.דלק": {
+      "english": "Fuel Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר דלק",
+        "מסנן דלק",
+        "fuel filter"
+      ]
+    },
+    "פ.מזגן": {
+      "english": "AC Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר מזגן",
+        "מסנן מזגן",
+        "ac filter",
+        "cabin filter"
+      ]
+    },
+    "פ.סולר": {
+      "english": "Diesel Filter",
+      "confidence": 0.95,
+      "aliases": [
+        "פילטר סולר",
+        "מסנן סולר",
+        "diesel filter"
+      ]
+    },
+    "שמן": {
+      "english": "Oil",
+      "confidence": 0.95,
+      "aliases": [
+        "oil"
+      ]
+    },
+    "בולם": {
+      "english": "Shock Absorber",
+      "confidence": 0.95,
+      "aliases": [
+        "shock",
+        "shock absorber",
+        "strut"
+      ]
+    },
+    "בולם קדמי": {
+      "english": "Front Shock Absorber",
+      "confidence": 0.95,
+      "aliases": [
+        "front shock",
+        "front shock absorber"
+      ]
+    },
+    "בולם אחורי": {
+      "english": "Rear Shock Absorber",
+      "confidence": 0.95,
+      "aliases": [
+        "rear shock",
+        "rear shock absorber"
+      ]
+    },
+    "רפידות": {
+      "english": "Brake Pads",
+      "confidence": 0.95,
+      "aliases": [
+        "רפידות בלם",
+        "brake pads"
+      ]
+    },
+    "דיסק": {
+      "english": "Disc",
+      "confidence": 0.95,
+      "aliases": [
+        "disc",
+        "disk"
+      ]
+    },
+    "דסקיות": {
+      "english": "Discs",
+      "confidence": 0.95,
+      "aliases": [
+        "דיסקים",
+        "discs",
+        "disks"
+      ]
+    },
+    "דסקיות קדמי": {
+      "english": "Front Discs",
+      "confidence": 0.95,
+      "aliases": [
+        "דיסקים קדמיים",
+        "front discs"
+      ]
+    },
+    "דסקיות אחורי": {
+      "english": "Rear Discs",
+      "confidence": 0.95,
+      "aliases": [
+        "דיסקים אחוריים",
+        "rear discs"
+      ]
+    },
+    "צלחת": {
+      "english": "Plate",
+      "confidence": 0.95,
+      "aliases": [
+        "plate"
+      ]
+    },
+    "צלחות": {
+      "english": "Plates",
+      "confidence": 0.95,
+      "aliases": [
+        "plates"
+      ]
+    },
+    "אטם": {
+      "english": "Gasket",
+      "confidence": 0.95,
+      "aliases": [
+        "gasket",
+        "seal"
+      ]
+    },
+    "אטם ראש": {
+      "english": "Head Gasket",
+      "confidence": 0.95,
+      "aliases": [
+        "head gasket"
+      ]
+    },
+    "אטם מכסה שסטומים": {
+      "english": "Valve Cover Gasket",
+      "confidence": 0.95,
+      "aliases": [
+        "valve cover gasket"
+      ]
+    },
+    "מצמד": {
+      "english": "Clutch",
+      "confidence": 0.95,
+      "aliases": [
+        "clutch"
+      ]
+    },
+    "טרמוסטט": {
+      "english": "Thermostat",
+      "confidence": 0.95,
+      "aliases": [
+        "thermostat"
+      ]
+    },
+    "משולש": {
+      "english": "Triangle Arm",
+      "confidence": 0.95,
+      "aliases": [
+        "control arm",
+        "triangle arm"
+      ]
+    },
+    "משולש עליון": {
+      "english": "Upper Control Arm",
+      "confidence": 0.95,
+      "aliases": [
+        "upper control arm"
+      ]
+    },
+    "משולש תחתון": {
+      "english": "Lower Control Arm",
+      "confidence": 0.95,
+      "aliases": [
+        "lower control arm"
+      ]
+    },
+    "זרוע": {
+      "english": "Arm",
+      "confidence": 0.95,
+      "aliases": [
+        "arm"
+      ]
+    },
+    "זרוע הגה": {
+      "english": "Steering Arm",
+      "confidence": 0.95,
+      "aliases": [
+        "steering arm",
+        "tie rod"
+      ]
+    },
+    "מייצב": {
+      "english": "Stabilizer",
+      "confidence": 0.95,
+      "aliases": [
+        "stabilizer",
+        "sway bar"
+      ]
+    },
+    "ג.מייצב": {
+      "english": "Stabilizer Link",
+      "confidence": 0.95,
+      "aliases": [
+        "stabilizer link",
+        "sway bar link"
+      ]
+    },
+    "גלגלת": {
+      "english": "Pulley",
+      "confidence": 0.95,
+      "aliases": [
+        "pulley"
+      ]
+    },
+    "כוהל": {
+      "english": "Coolant",
+      "confidence": 0.95,
+      "aliases": [
+        "coolant",
+        "antifreeze"
+      ]
+    },
+    "חיישן": {
+      "english": "Sensor",
+      "confidence": 0.95,
+      "aliases": [
+        "sensor"
+      ]
+    },
+    "ח.חמצן": {
+      "english": "Oxygen Sensor",
+      "confidence": 0.95,
+      "aliases": [
+        "oxygen sensor",
+        "o2 sensor"
+      ]
+    },
+    "ח.קראנק": {
+      "english": "Crankshaft Sensor",
+      "confidence": 0.95,
+      "aliases": [
+        "crankshaft position sensor",
+        "crank sensor"
+      ]
+    },
+    "מיסב": {
+      "english": "Bearing",
+      "confidence": 0.95,
+      "aliases": [
+        "bearing"
+      ]
+    },
+    "אנטרקולר": {
+      "english": "Intercooler",
+      "confidence": 0.95,
+      "aliases": [
+        "intercooler"
+      ]
+    },
+    "רדיאטור": {
+      "english": "Radiator",
+      "confidence": 0.95,
+      "aliases": [
+        "radiator"
+      ]
+    },
+    "תומך": {
+      "english": "Support",
+      "confidence": 0.95,
+      "aliases": [
+        "support",
+        "mount"
+      ]
+    },
+    "ת.מנוע": {
+      "english": "Engine Mount",
+      "confidence": 0.95,
+      "aliases": [
+        "engine mount",
+        "motor mount"
+      ]
+    },
+    "ת.משולש": {
+      "english": "Control Arm Bushing",
+      "confidence": 0.95,
+      "aliases": [
+        "control arm bushing"
+      ]
+    },
+    "גומי": {
+      "english": "Rubber",
+      "confidence": 0.95,
+      "aliases": [
+        "rubber"
+      ]
+    },
+    "קפיץ": {
+      "english": "Spring",
+      "confidence": 0.95,
+      "aliases": [
+        "spring"
+      ]
+    },
+    "מ.מים": {
+      "english": "Water Pump",
+      "confidence": 0.95,
+      "aliases": [
+        "water pump"
+      ]
+    },
+    "קולר": {
+      "english": "Cooler",
+      "confidence": 0.95,
+      "aliases": [
+        "cooler"
+      ]
+    },
+    "מ.דלק": {
+      "english": "Fuel Pump",
+      "confidence": 0.95,
+      "aliases": [
+        "fuel pump"
+      ]
+    },
+    "מ.מייצב": {
+      "english": "Stabilizer Link",
+      "confidence": 0.95,
+      "aliases": [
+        "stabilizer link"
+      ]
+    },
+    "צינור": {
+      "english": "Pipe",
+      "confidence": 0.95,
+      "aliases": [
+        "pipe",
+        "hose"
+      ]
+    },
+    "צינור מים": {
+      "english": "Water Pipe",
+      "confidence": 0.95,
+      "aliases": [
+        "water pipe",
+        "water hose"
+      ]
+    },
+    "צלב": {
+      "english": "Universal Joint",
+      "confidence": 0.95,
+      "aliases": [
+        "universal joint",
+        "u-joint"
+      ]
+    },
+    "יוניט": {
+      "english": "Unit",
+      "confidence": 0.95,
+      "aliases": [
+        "unit",
+        "sensor"
+      ]
+    },
+    "יוניט חום": {
+      "english": "Temperature Sensor",
+      "confidence": 0.95,
+      "aliases": [
+        "temperature sensor",
+        "temp sensor"
+      ]
+    },
+    "יוניט שמן": {
+      "english": "Oil Pressure Sensor",
+      "confidence": 0.95,
+      "aliases": [
+        "oil pressure sensor"
+      ]
+    },
+    "יוניט בלם": {
+      "english": "Brake Switch",
+      "confidence": 0.95,
+      "aliases": [
+        "brake light switch"
+      ]
+    },
+    "ציריה": {
+      "english": "CV Axle",
+      "confidence": 0.95,
+      "aliases": [
+        "cv axle",
+        "drive shaft"
+      ]
+    },
+    "פעמון צריה": {
+      "english": "CV Boot",
+      "confidence": 0.95,
+      "aliases": [
+        "cv boot"
+      ]
+    },
+    "בוקסה": {
+      "english": "Bushing",
+      "confidence": 0.95,
+      "aliases": [
+        "bushing"
+      ]
+    },
+    "גל": {
+      "english": "Shaft",
+      "confidence": 0.95,
+      "aliases": [
+        "shaft"
+      ]
+    }
+  },
+  "special_patterns": [
+    {
+      "name": "year_range",
+      "regex": "(?:מ|מודל\\s*|משנת\\s*)(\\d{2})[-\\s]?(?:עד|ו|-)?\\s*(?:שנת\\s*)?(\\d{2})?",
+      "description": "Year range with מ (from) and עד (to)"
+    },
+    {
+      "name": "single_year",
+      "regex": "(?:שנת|מודל)\\s*(\\d{4}|\\d{2})",
+      "description": "Single year specification"
+    },
+    {
+      "name": "displacement",
+      "regex": "נפח\\s*(\\d+\\.\\d+|\\d+)",
+      "description": "Engine displacement"
+    },
+    {
+      "name": "specific_model",
+      "regex": "(?:דגם|מודל)\\s*([A-Za-z0-9]+)",
+      "description": "Specific model code"
+    },
+    {
+      "name": "wheel_drive",
+      "regex": "(4x4|4x2|2x4|AWD|RWD|FWD)",
+      "description": "Type of wheel drive"
+    }
+  ],
+  "abbreviations": {
+    "פ.": "פילטר",
+    "ח.": "חיישן",
+    "ת.": "תומך",
+    "ג.": "גומי",
+    "מ.": "משאבת"
+  },
+  "component_locations": {
+    "קדמי": "Front",
+    "אחורי": "Rear",
+    "ימין": "Right",
+    "שמאל": "Left",
+    "עליון": "Upper",
+    "תחתון": "Lower"
+  },
+  "engine_codes": {
+    "CBZ": {
+      "make": "Volkswagen",
+      "displacement": "1.2",
+      "fuel_type": "Petrol"
+    },
+    "CDA": {
+      "make": "Volkswagen",
+      "displacement": "1.8",
+      "fuel_type": "Petrol"
+    },
+    "CJS": {
+      "make": "Volkswagen",
+      "displacement": "1.8",
+      "fuel_type": "Petrol"
+    },
+    "CAX": {
+      "make": "Volkswagen",
+      "displacement": "1.4",
+      "fuel_type": "Petrol"
+    },
+    "CAV": {
+      "make": "Volkswagen",
+      "displacement": "1.4",
+      "fuel_type": "Petrol"
+    },
+    "BSE": {
+      "make": "Volkswagen",
+      "displacement": "1.6",
+      "fuel_type": "Petrol"
+    },
+    "BTS": {
+      "make": "Volkswagen",
+      "displacement": "1.6",
+      "fuel_type": "Petrol"
+    },
+    "CJZ": {
+      "make": "Volkswagen",
+      "displacement": "1.2",
+      "fuel_type": "Petrol"
+    },
+    "TDI": {
+      "make": "Volkswagen",
+      "displacement": "Various",
+      "fuel_type": "Diesel"
+    }
+  }
+}

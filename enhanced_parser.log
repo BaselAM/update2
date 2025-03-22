@@ -1,0 +1,36 @@
+2025-03-22 19:39:31,573 - EnhancedCarPartsParser - INFO - Knowledge base saved to enhanced_knowledge_base.json
+2025-03-22 19:39:31,653 - EnhancedCarPartsParser - INFO - Created new parts database with enhanced schema
+2025-03-22 19:39:31,653 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:42:43,721 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:46:29,010 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:50:28,021 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:50:28,021 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 19:50:58,265 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:50:58,265 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 19:54:22,812 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:54:22,812 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 19:54:30,645 - EnhancedCarPartsParser - ERROR - Error during import: 'utf-8' codec can't decode byte 0xc2 in position 31: invalid continuation byte
+2025-03-22 20:00:48,450 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:00:48,450 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:01:09,781 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:01:09,781 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:02:00,921 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:02:00,921 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:02:03,952 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:02:03,952 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:02:35,345 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:02:35,345 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:02:37,403 - EnhancedCarPartsParser - ERROR - Error during import: expected str, bytes or os.PathLike object, not _io.TextIOWrapper
+2025-03-22 20:09:09,376 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:09:09,377 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:09:11,476 - EnhancedCarPartsParser - INFO - Successfully imported 2850 car parts into the database. Skipped 0 invalid entries.
+2025-03-22 20:09:35,325 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:09:35,325 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:09:38,065 - EnhancedCarPartsParser - INFO - Successfully imported 2850 car parts into the database. Skipped 0 invalid entries.
+2025-03-22 20:10:35,166 - EnhancedCarPartsParser - INFO - Created new parts database with enhanced schema
+2025-03-22 20:10:35,168 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:10:35,168 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False
+2025-03-22 20:10:36,999 - EnhancedCarPartsParser - INFO - Successfully imported 2850 car parts into the database. Skipped 0 invalid entries.
+2025-03-22 20:11:48,818 - EnhancedCarPartsParser - INFO - Created new parts database with enhanced schema
+2025-03-22 20:11:48,819 - EnhancedCarPartsParser - INFO - Initialized EnhancedCarPartsParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 20:11:48,819 - EnhancedCarPartsParser - INFO - Advanced features available: NumPy=True, scikit-learn=False, spaCy=False, Hebrew NLP=False, Word2Vec=False, ML Models=False

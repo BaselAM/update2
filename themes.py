@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QColor
 from shared_imports import *
-
+import traceback
 THEMES = {
     "classic": {
         # Sophisticated blue theme with depth and elegance
@@ -162,7 +162,11 @@ def temp_theme(theme_name):
         set_theme(original)
 
 
+# Modify the get_color function to trace where it's called incorrectly:
 def get_color(color_key):
+    if isinstance(color_key, tuple) or len(color_key) > 30:
+        print("Invalid get_color call:")
+        traceback.print_stack()
     return THEMES[_current_theme].get(color_key, QColor(0, 0, 0))
 
 

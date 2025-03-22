@@ -1,5 +1,3 @@
-# Save this as a new file called direct_chat_widget.py in the same folder as chat_widget.py
-
 from PyQt5.QtCore import Qt, pyqtSignal, QSize, QPoint, QTimer
 from PyQt5.QtWidgets import (
     QWidget, QToolButton, QVBoxLayout,
@@ -11,21 +9,10 @@ from PyQt5.QtGui import QIcon, QPixmap, QFont, QColor
 from pathlib import Path
 import themes
 import threading
-import time
-import random
 
 
-def is_dark_theme():
-    """Determine if the current theme is dark based on background color"""
-    bg_color = themes.get_color('card_bg')
-    bg_color = bg_color.lstrip('#')
-    r, g, b = tuple(int(bg_color[i:i + 2], 16) for i in (0, 2, 4))
-    brightness = (r * 299 + g * 587 + b * 114) / 1000
-    return brightness < 128
-
-
-class DirectChatBubble(QFrame):
-    """Chat message bubble"""
+class ChatBubble(QFrame):
+    """Chat message bubble for displaying messages"""
 
     def __init__(self, message, is_user=True, parent=None):
         super().__init__(parent)
@@ -34,33 +21,46 @@ class DirectChatBubble(QFrame):
         self.apply_theme()
 
     def setup_ui(self, message):
+        """Set up the chat bubble UI"""
         layout = QHBoxLayout(self)
         layout.setContentsMargins(8, 6, 8, 6)
         layout.setSpacing(10)
 
-        # Message label
+        # Create message label
         self.message_label = QLabel(message)
         self.message_label.setWordWrap(True)
         self.message_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        # Modern font
         font = QFont("Segoe UI", 10)
         self.message_label.setFont(font)
         self.message_label.setMinimumWidth(150)
 
-        # Layout based on user/bot message
+        # Add contents to layout
         if self.is_user:
             layout.addStretch(1)
             layout.addWidget(self.message_label)
             self.setObjectName("userMessage")
         else:
-            # Bot avatar
-            self.avatar_label = QLabel("🤖")
+            # Avatar for bot messages
+            self.avatar_label = QLabel()
+            avatar_path = Path(
+                __file__).resolve().parent.parent.parent / "resources/chatbot.png"
+            if avatar_path.exists():
+                avatar_pixmap = QPixmap(str(avatar_path)).scaled(22, 22,
+                                                                 Qt.KeepAspectRatio,
+                                                                 Qt.SmoothTransformation)
+                self.avatar_label.setPixmap(avatar_pixmap)
+            else:
+                self.avatar_label.setText("🤖")
+
             self.avatar_label.setFixedSize(22, 22)
             layout.addWidget(self.avatar_label)
             layout.addWidget(self.message_label)
             layout.addStretch(1)
             self.setObjectName("botMessage")
 
-        # Shadow effect
+        # Subtle shadow
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(10)
         shadow.setOffset(0, 2)
@@ -68,20 +68,32 @@ class DirectChatBubble(QFrame):
         self.setGraphicsEffect(shadow)
 
     def apply_theme(self):
+        """Apply theme styling"""
+        # Determine theme
         dark_mode = is_dark_theme()
 
         if self.is_user:
-            bubble_color = "#2979FF" if dark_mode else "#2962FF"  # Blue
-            text_color = "#FFFFFF"  # White text
+            if dark_mode:
+                bubble_color = "#2979FF"  # Bright blue
+                text_color = "#FFFFFF"  # White text
+            else:
+                bubble_color = "#2962FF"  # Slightly darker blue
+                text_color = "#FFFFFF"  # White text
         else:
-            bubble_color = "#1E2334" if dark_mode else "#F4F6F8"  # Dark/Light grey
-            text_color = "#E0E0FF" if dark_mode else "#36454F"  # Light blue/Charcoal
+            if dark_mode:
+                bubble_color = "#1E2334"  # Dark blue-gray
+                text_color = "#E0E0FF"  # Light blue-ish text
+            else:
+                bubble_color = "#F4F6F8"  # Light gray
+                text_color = "#36454F"  # Charcoal text
 
+        # Apply styles
         self.setStyleSheet(f"""
             QFrame#{self.objectName()} {{
                 background-color: {bubble_color};
                 border-radius: 18px;
             }}
+
             QLabel {{
                 color: {text_color};
                 background-color: transparent;
@@ -90,9 +102,9 @@ class DirectChatBubble(QFrame):
         """)
 
 
-class DirectChatWidget(QWidget):
-    """Self-contained chat widget implementation"""
-    chat_submitted = pyqtSignal(str)
+class ChatUI(QWidget):
+    """Chat user interface widget"""
+    message_sent = pyqtSignal(str)  # Signal emitted when user sends a message
 
     def __init__(self, translator, parent=None):
         super().__init__(parent)
@@ -102,35 +114,21 @@ class DirectChatWidget(QWidget):
         self.chat_visible = False
         self.is_expanded = False
 
-        # Bot responses for BaselAM
-        self.responses = [
-            "Hello BaselAM! I'm your new chat implementation.",
-            "I'm responding directly now, no more 'coming soon' messages!",
-            "Your message has been received. This is the new chat system working.",
-            "The chat is fully operational now, BaselAM.",
-            "I'm integrated and responding to your messages now.",
-            "Your new chat implementation is working correctly!",
-            "This is your embedded AI assistant responding.",
-            "Message received and processed by the new chat system.",
-            "The chat functionality is now working properly.",
-            "I'm here and responsive, BaselAM! No more waiting."
-        ]
-
-        # Set up the UI
+        # Setup UI components
         self.setup_ui()
 
     def setup_ui(self):
-        # Main layout
+        """Create the chat UI components"""
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # Chat button
+        # Create chat button with modern styling
         self.chat_btn = QToolButton()
-        self.chat_btn.setFixedSize(40, 40)
         self.chat_btn.setCursor(Qt.PointingHandCursor)
-        self.chat_btn.setToolTip("Chat")
+        self.chat_btn.setToolTip(self.translator.t('chat'))
+        self.chat_btn.clicked.connect(self.toggle_chat)
 
-        # Try to find icon, use text if missing
+        # Add chat icon
         chat_icon_path = Path(
             __file__).resolve().parent.parent.parent / "resources/chatbot.png"
         if chat_icon_path.exists():
@@ -138,67 +136,82 @@ class DirectChatWidget(QWidget):
             self.chat_btn.setIconSize(QSize(26, 26))
         else:
             self.chat_btn.setText("💬")
+            self.chat_btn.setToolButtonStyle(Qt.ToolButtonTextOnly)
 
-        # Connect button to toggle function
-        self.chat_btn.clicked.connect(self.toggle_chat)
+        # Make button appropriately sized
+        self.chat_btn.setMinimumSize(40, 40)
 
-        # Chat popup container
+        # Create chat container with popup behavior
         self.chat_container = QFrame()
         self.chat_container.setObjectName("chatContainer")
         self.chat_container.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
         self.chat_container.setAttribute(Qt.WA_TranslucentBackground)
 
-        # Shadow effect
-        shadow = QGraphicsDropShadowEffect()
-        shadow.setBlurRadius(20)
-        shadow.setOffset(0, 4)
-        shadow.setColor(QColor(0, 0, 0, 40))
-        self.chat_container.setGraphicsEffect(shadow)
+        # Add shadow to the container
+        container_shadow = QGraphicsDropShadowEffect()
+        container_shadow.setBlurRadius(20)
+        container_shadow.setOffset(0, 4)
+        container_shadow.setColor(QColor(0, 0, 0, 40))
+        self.chat_container.setGraphicsEffect(container_shadow)
 
         # Container layout
         container_layout = QVBoxLayout(self.chat_container)
         container_layout.setContentsMargins(0, 0, 0, 0)
+        container_layout.setSpacing(0)
 
-        # Content frame
+        # Inner content frame
         content_frame = QFrame()
         content_frame.setObjectName("contentFrame")
+
+        # Content layout
         content_layout = QVBoxLayout(content_frame)
         content_layout.setContentsMargins(0, 0, 0, 0)
+        content_layout.setSpacing(0)
 
-        # Header with title and buttons
-        header = QWidget()
-        header.setObjectName("chatHeader")
-        header_layout = QHBoxLayout(header)
+        # Chat header with title and buttons
+        header_container = QWidget()
+        header_container.setObjectName("chatHeader")
+        header_layout = QHBoxLayout(header_container)
         header_layout.setContentsMargins(15, 10, 15, 10)
 
-        # Header content
-        title = QLabel("Chat Assistant")
-        title.setObjectName("chatTitle")
+        # Add avatar in header
+        header_avatar = QLabel()
+        if chat_icon_path.exists():
+            avatar_pixmap = QPixmap(str(chat_icon_path)).scaled(22, 22,
+                                                                Qt.KeepAspectRatio,
+                                                                Qt.SmoothTransformation)
+            header_avatar.setPixmap(avatar_pixmap)
+
+        chat_title = QLabel("Chat Assistant")
         font = QFont("Segoe UI", 11)
         font.setBold(True)
-        title.setFont(font)
+        chat_title.setFont(font)
+        chat_title.setObjectName("chatTitle")
 
-        # Buttons
+        # Expand button
         self.expand_btn = QToolButton()
-        self.expand_btn.setText("⤢")
+        self.expand_btn.setText("⤢")  # Unicode expand symbol
         self.expand_btn.setObjectName("expandButton")
-        self.expand_btn.setToolTip("Expand")
+        self.expand_btn.setToolTip("Expand chat")
+        self.expand_btn.setCursor(Qt.PointingHandCursor)
         self.expand_btn.clicked.connect(self.toggle_expand)
 
+        # Close button
         close_btn = QToolButton()
         close_btn.setText("✕")
         close_btn.setObjectName("closeButton")
         close_btn.setToolTip("Close")
+        close_btn.setCursor(Qt.PointingHandCursor)
         close_btn.clicked.connect(self.toggle_chat)
 
-        # Add to header layout
-        header_layout.addWidget(QLabel("🤖"))
-        header_layout.addWidget(title)
+        # Add header elements
+        header_layout.addWidget(header_avatar)
+        header_layout.addWidget(chat_title)
         header_layout.addStretch(1)
         header_layout.addWidget(self.expand_btn)
         header_layout.addWidget(close_btn)
 
-        # Scroll area for messages
+        # Chat messages area with scroll
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -206,76 +219,111 @@ class DirectChatWidget(QWidget):
         self.scroll_area.setObjectName("chatScroll")
         self.scroll_area.setFrameShape(QFrame.NoFrame)
 
-        # Messages container
+        # Container for chat bubbles
         messages_widget = QWidget()
+        messages_widget.setObjectName("messagesContainer")
         self.messages_layout = QVBoxLayout(messages_widget)
         self.messages_layout.setSpacing(12)
         self.messages_layout.setContentsMargins(15, 15, 15, 15)
-        self.messages_layout.addStretch(1)
+        self.messages_layout.addStretch(1)  # Push messages up
 
         self.scroll_area.setWidget(messages_widget)
 
-        # Input area
+        # Message input area
         input_container = QWidget()
         input_container.setObjectName("inputContainer")
         input_layout = QHBoxLayout(input_container)
         input_layout.setContentsMargins(15, 15, 15, 15)
         input_layout.setSpacing(10)
 
-        # Input field
         self.message_input = QLineEdit()
         self.message_input.setObjectName("messageInput")
         self.message_input.setPlaceholderText("Type a message...")
-        self.message_input.setFixedHeight(38)
         self.message_input.returnPressed.connect(self.send_message)
+        self.message_input.setFixedHeight(38)
 
-        # Send button
-        self.send_btn = QPushButton("Send")
-        self.send_btn.setObjectName("sendButton")
-        self.send_btn.setFixedSize(70, 38)
-        self.send_btn.setCursor(Qt.PointingHandCursor)
-        self.send_btn.clicked.connect(self.send_message)
+        send_btn = QPushButton()
+        send_btn.setText("Send")
+        send_btn.setObjectName("sendButton")
+        send_btn.setFixedSize(70, 38)
+        send_btn.setCursor(Qt.PointingHandCursor)
+        send_btn.clicked.connect(self.send_message)
 
-        # Add to input layout
+        # Add input elements
         input_layout.addWidget(self.message_input)
-        input_layout.addWidget(self.send_btn)
+        input_layout.addWidget(send_btn)
 
-        # Build the complete layout
-        content_layout.addWidget(header)
+        # Add everything to content layout
+        content_layout.addWidget(header_container)
         content_layout.addWidget(self.scroll_area, 1)
         content_layout.addWidget(input_container)
 
+        # Add content frame to container
         container_layout.addWidget(content_frame)
 
-        # Set size
+        # Set fixed size for the popup
         self.chat_container.setFixedWidth(320)
         self.chat_container.setFixedHeight(420)
 
-        # Add welcome message
-        self.add_message(
-            "Hello BaselAM! I'm your new chat assistant that actually works. Try sending a message!",
-            False)
-
-        # Add to main layout
+        # Add button to main layout
         layout.addWidget(self.chat_btn)
 
-        # Apply styling
+        # Apply theme
         self.apply_theme()
+
+    def add_message(self, message, is_user=True):
+        """Add a chat message bubble"""
+        bubble = ChatBubble(message, is_user)
+        self.messages_layout.insertWidget(self.messages_layout.count() - 1, bubble)
+
+        # Scroll to the bottom
+        QTimer.singleShot(100, self.scroll_to_bottom)
+
+        return bubble  # Return for potential removal
+
+    def send_message(self):
+        """Send user message"""
+        message = self.message_input.text().strip()
+        if not message:
+            return
+
+        # Add user message to the chat
+        self.add_message(message, True)
+
+        # Clear input
+        self.message_input.clear()
+
+        # Emit signal with message
+        self.message_sent.emit(message)
+
+    def show_thinking(self):
+        """Show thinking bubble"""
+        return self.add_message("Thinking...", False)
+
+    def remove_bubble(self, bubble):
+        """Remove a chat bubble from the UI"""
+        self.messages_layout.removeWidget(bubble)
+        bubble.deleteLater()
+
+    def scroll_to_bottom(self):
+        """Scroll to the bottom of the chat"""
+        scrollbar = self.scroll_area.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
 
     def toggle_chat(self):
         """Toggle chat visibility"""
         self.chat_visible = not self.chat_visible
 
         if self.chat_visible:
-            # Position near button
-            btn_pos = self.chat_btn.mapToGlobal(QPoint(0, self.chat_btn.height()))
+            # Position the popup near the button
+            btn_global_pos = self.chat_btn.mapToGlobal(QPoint(0, self.chat_btn.height()))
 
-            # Ensure on screen
+            # Calculate position to make sure it's visible
             screen = QApplication.desktop().screenGeometry()
-            x = min(btn_pos.x(), screen.width() - self.chat_container.width() - 20)
+            x = min(btn_global_pos.x(), screen.width() - self.chat_container.width() - 20)
             x = max(20, x)
 
-            self.chat_container.move(x, btn_pos.y() + 5)
+            self.chat_container.move(x, btn_global_pos.y() + 5)
             self.chat_container.show()
             self.message_input.setFocus()
         else:
@@ -288,73 +336,30 @@ class DirectChatWidget(QWidget):
         if self.is_expanded:
             self.chat_container.setFixedWidth(400)
             self.chat_container.setFixedHeight(500)
-            self.expand_btn.setText("⤡")
+            self.expand_btn.setText("⤡")  # Unicode collapse symbol
+            self.expand_btn.setToolTip("Collapse chat")
         else:
             self.chat_container.setFixedWidth(320)
             self.chat_container.setFixedHeight(420)
-            self.expand_btn.setText("⤢")
-
-    def send_message(self):
-        """Send a message and get response"""
-        message = self.message_input.text().strip()
-        if not message:
-            return
-
-        # Add user message
-        self.add_message(message, True)
-
-        # Clear input
-        self.message_input.clear()
-
-        # Emit signal
-        self.chat_submitted.emit(message)
-
-        # Show thinking message
-        thinking = self.add_message("Thinking...", False)
-
-        # Process in thread
-        def get_response():
-            # Simulate thinking
-            time.sleep(1)
-
-            # Get random response
-            response = random.choice(self.responses)
-
-            # Remove thinking message
-            QTimer.singleShot(0, lambda: self.remove_message(thinking))
-
-            # Add AI response
-            QTimer.singleShot(100, lambda: self.add_message(response, False))
-
-        threading.Thread(target=get_response, daemon=True).start()
-
-    def add_message(self, message, is_user=True):
-        """Add a message bubble to the chat"""
-        bubble = DirectChatBubble(message, is_user)
-        self.messages_layout.insertWidget(self.messages_layout.count() - 1, bubble)
-
-        # Scroll to bottom
-        QTimer.singleShot(100, self.scroll_to_bottom)
-
-        return bubble
-
-    def remove_message(self, bubble):
-        """Remove a message bubble from the chat"""
-        self.messages_layout.removeWidget(bubble)
-        bubble.deleteLater()
-
-    def scroll_to_bottom(self):
-        """Scroll to the bottom of the chat"""
-        scrollbar = self.scroll_area.verticalScrollBar()
-        scrollbar.setValue(scrollbar.maximum())
+            self.expand_btn.setText("⤢")  # Unicode expand symbol
+            self.expand_btn.setToolTip("Expand chat")
 
     def apply_theme(self):
-        """Apply theme styling"""
+        """Apply modern theme styling"""
+        # Determine if we're in dark mode
         dark_mode = is_dark_theme()
-        accent_color = "#3949AB" if dark_mode else "#3F51B5"
-        accent_hover = "#5C6BC0"
-        button_text = "#FFFFFF"
 
+        # Define colors
+        if dark_mode:
+            accent_color = "#3949AB"  # Indigo blue for dark theme
+            accent_hover = "#5C6BC0"  # Lighter indigo for hover
+            button_text = "#FFFFFF"
+        else:
+            accent_color = "#3F51B5"  # Standard indigo for light theme
+            accent_hover = "#5C6BC0"  # Lighter indigo for hover
+            button_text = "#FFFFFF"
+
+        # Get theme colors
         bg_color = themes.get_color('card_bg')
         text_color = themes.get_color('text')
         input_bg = themes.get_color('input_bg')
@@ -438,6 +443,10 @@ class DirectChatWidget(QWidget):
                 height: 0px;
             }}
 
+            #messagesContainer {{
+                background-color: transparent;
+            }}
+
             #inputContainer {{
                 background-color: {bg_color};
                 border-bottom-left-radius: 10px;
@@ -471,3 +480,12 @@ class DirectChatWidget(QWidget):
                 background-color: {accent_hover};
             }}
         """)
+
+
+def is_dark_theme():
+    """Determine if the current theme is dark based on background color"""
+    bg_color = themes.get_color('card_bg')
+    bg_color = bg_color.lstrip('#')
+    r, g, b = tuple(int(bg_color[i:i + 2], 16) for i in (0, 2, 4))
+    brightness = (r * 299 + g * 587 + b * 114) / 1000
+    return brightness < 128

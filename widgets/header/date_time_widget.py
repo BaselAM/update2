@@ -56,25 +56,29 @@ class LuxuryDateTimeWidget(QWidget):
 
     def update_datetime(self):
         """Update the date and time display"""
-        now = QDateTime.currentDateTime()
+        try:
+            now = QDateTime.currentDateTime()
 
-        # Get locale for the current language
-        lang = getattr(self.translator, 'language', 'en')
-        locale = QLocale(QLocale.Hebrew if lang == 'he' else QLocale.English)
+            # Get locale for the current language
+            lang = getattr(self.translator, 'language', 'en')
+            locale = QLocale(QLocale.Hebrew if lang == 'he' else QLocale.English)
 
-        # Format time based on locale
-        time_str = locale.toString(now, "hh:mm:ss")
-        self.time_label.setText(time_str)
+            # Format time based on locale
+            time_str = locale.toString(now, "hh:mm:ss")
+            self.time_label.setText(time_str)
 
-        # Format date based on locale
-        if lang == 'he':
-            # Hebrew date format
-            date_str = locale.toString(now, "dd MMMM yyyy")
-        else:
-            # English date format
-            date_str = locale.toString(now, "MMMM dd, yyyy")
+            # Format date based on locale
+            if lang == 'he':
+                # Hebrew date format
+                date_str = locale.toString(now, "dd MMMM yyyy")
+            else:
+                # English date format
+                date_str = locale.toString(now, "MMMM dd, yyyy")
 
-        self.date_label.setText(date_str)
+            self.date_label.setText(date_str)
+        except (RuntimeError, AttributeError, KeyboardInterrupt):
+            # Handle errors during shutdown
+            pass
 
     def enterEvent(self, event):
         """Handle mouse enter event for hover effects"""
@@ -149,3 +153,26 @@ class LuxuryDateTimeWidget(QWidget):
     def update_translations(self):
         """Update when language changes"""
         self.update_datetime()
+
+    def closeEvent(self, event):
+        """Handle widget close event"""
+        self.stop_timer()
+        super().closeEvent(event)
+
+    def stop_timer(self):
+        """Safely stop the timer"""
+        if hasattr(self, 'timer') and self.timer.isActive():
+            self.timer.stop()
+
+    def hideEvent(self, event):
+        """Handle widget hide event"""
+        # Stop timer when widget is hidden (like when window is closed)
+        self.stop_timer()
+        super().hideEvent(event)
+
+    def __del__(self):
+        """Destructor to ensure timer is stopped"""
+        try:
+            self.stop_timer()
+        except:
+            pass

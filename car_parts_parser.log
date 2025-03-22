@@ -1,0 +1,5 @@
+2025-03-22 19:27:24,732 - CarPartsParser - INFO - Initialized CarPartParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:27:26,473 - CarPartsParser - INFO - Successfully imported 2850 car parts into the database. Skipped 0 invalid entries.
+2025-03-22 19:27:42,105 - CarPartsParser - INFO - Created new parts database with enhanced schema
+2025-03-22 19:27:42,105 - CarPartsParser - INFO - Initialized CarPartParser with 27 car makes, 39 car models, and 58 part categories
+2025-03-22 19:27:43,688 - CarPartsParser - INFO - Successfully imported 2850 car parts into the database. Skipped 0 invalid entries.
